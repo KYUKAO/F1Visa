@@ -374,4 +374,4 @@ I have received a five-year [funding type] from [source]
 - 照片似乎不是必须的
 
 ## 文件位置
-- 清单网页: `visa-checklist.html`
+- 清单网页: `index.html`

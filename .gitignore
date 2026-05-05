@@ -1,0 +1,25 @@
+# Visa documents (private - DO NOT commit)
+docs/
+
+# Local config overrides
+visa-config.local.json
+local-config.json
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+*.swp
+*.swo
+.vscode/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temp
+*.tmp
+*.temp
