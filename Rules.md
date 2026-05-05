@@ -374,7 +374,16 @@ I have received a five-year [funding type] from [source]
 - 照片似乎不是必须的
 
 ## 文件位置
-- 清单网页: `index.html`
+- 编辑器版本 (可编辑): `editor.html` — 本地开发使用，包含所有编辑和保存功能
+- 正式版 (只读): `index.html` — 部署到 GitHub Pages，自动读取 `visa-config.json`
+- 配置文件: `visa-config.json`
+- 本地开发服务器: `server.js`
+- 编译 CSS: `dist/styles.css`（由 `src/input.css` + Tailwind v3 编译生成）
+
+## 构建流程
+- 开发：`npm run dev`（用 `server.js` 启动本地服务）
+- 构建样式：`npx tailwindcss -i src/input.css -o dist/styles.css --minify`
+- 注意：`docs/` 中的签证文件不上传到 GitHub，仅本地使用
 
 ## UI 规范
 - **问答页 (Q&A) 必须保留为英文**，不可翻译成其他语言

@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 签证清单</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+.drag-over { background: #dbeafe !important; border: 2px dashed #2563eb !important; }
+.dragging { opacity: 0.4; }
+.sortable-item { cursor: default; }
+.drag-over-card { outline: 2px dashed #6366f1; outline-offset: -2px; }
+.drag-handle { cursor: grab; user-select: none; }
+.drag-handle:active { cursor: grabbing; }
+.sortable-item:active { cursor: grabbing; }
+.item-card { transition: all 0.2s; border-left: 4px solid transparent; }
+.item-card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+input[type="text"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-radius: 4px; }
+input[type="number"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-radius: 4px; }
+textarea:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-radius: 4px; }
+.badge { transition: all 0.2s; }
+input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
+.modal-overlay { animation: fadeIn 0.15s ease; }
+.modal-content { animation: slideUp 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.case-enter { animation: caseSlide 0.3s ease; }
+@keyframes caseSlide { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+/* PC: push "原件/复印件" and quantity to the right */
+.item-meta-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+}
+.item-meta-row .item-name-input {
+  flex: 1 !important;
+  min-width: 200px !important;
+  max-width: none !important;
+}
+.item-meta-row select,
+.item-meta-row input[type="number"] {
+  margin-left: auto !important;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  /* Nav: wrap buttons to next line, shrink title on very small screens */
+  nav .flex.items-center.justify-between {
+    flex-wrap: wrap !important;
+    height: auto !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+  nav h1 {
+    font-size: 0.95rem !important;
+    white-space: nowrap !important;
+  }
+  nav .flex.items-center.gap-2 {
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+  }
+  .nav-btn {
+    font-size: 0.7rem !important;
+    padding: 5px 8px !important;
+  }
+  button[onclick="exportConfig()"] {
+    padding: 5px 8px !important;
+  }
+  button[onclick="exportConfig()"] svg + span {
+    display: none !important;
+  }
+
+  /* Item cards: hide drag handle, compact layout */
+  .sortable-item .drag-handle {
+    display: none !important;
+  }
+  .sortable-item .flex-col {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+  .sortable-item input[type="text"],
+  .sortable-item input[type="number"],
+  .sortable-item select {
+    font-size: 0.8rem !important;
+  }
+  /* Item meta: name takes full width, original/qty on next row */
+  .item-meta-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .item-meta-row .item-name-input {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+
+  /* Modals: full-width with small margin */
+  .modal-content {
+    margin: 8px !important;
+    max-width: calc(100vw - 16px) !important;
+    padding: 16px !important;
+    max-height: calc(100vh - 32px) !important;
+  }
+
+  /* Case cards: reduce padding */
+  .case-enter {
+    padding: 12px !important;
+  }
+  .case-enter .text-lg {
+    font-size: 0.95rem !important;
+  }
+  .case-enter .grid-cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* QA accordion: compact text */
+  .bg-white.rounded-2xl.shadow-sm.overflow-hidden.mb-4 button {
+    padding: 12px !important;
+  }
+}
+</style>
+</head>
+<body class="min-h-screen bg-white">
+
+<!-- Hidden file picker for folder selection -->
+<input type="file" id="filePicker" style="display:none" webkitdirectory multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx">
+
+<!-- Top Nav -->
+<nav class="bg-sky-50 border-b-2 border-sky-200 sticky top-0 z-50 shadow-sm">
+<div class="max-w-5xl mx-auto px-4">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center gap-3">
+<svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+<h1 class="text-xl font-bold text-blue-900">F1 签证清单</h1>
+</div>
+<div class="flex items-center gap-2">
+<button onclick="showTab('checklist')" id="btn-checklist" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white shadow-sm">清单</button>
+<button onclick="showTab('cases')" id="btn-cases" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm">案例</button>
+<button onclick="showTab('qa')" id="btn-qa" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm">问答</button>
+<button onclick="showTab('templates')" id="btn-templates" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm">模板</button>
+<button onclick="showSettings()" class="p-2 rounded-lg text-blue-600 hover:bg-blue-100" title="设置">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+</button>
+<button onclick="exportConfig()" class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold bg-green-600 text-white hover:bg-green-700 shadow-sm" title="保存配置">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+保存配置
+</button>
+</div>
+</div>
+</div>
+</nav>
+
+<div class="max-w-5xl mx-auto px-4 py-6">
+
+<!-- ===== CHECKLIST PAGE ===== -->
+<div id="page-checklist">
+
+<!-- Two Columns -->
+<div class="flex flex-col gap-6">
+
+<!-- 图例 -->
+<div class="flex flex-wrap items-center gap-4 text-xs font-semibold text-gray-600 bg-gray-50 rounded-xl px-4 py-2 border border-gray-200">
+<span class="font-bold text-gray-800 mr-1">图例:</span>
+<input type="checkbox" checked disabled class="w-4 h-4 rounded border-2 border-gray-300 accent-blue-600">
+<span>已准备</span>
+<span class="text-gray-300">|</span>
+<div class="flex items-center gap-1">
+<div class="w-5 h-5 bg-rose-100 text-rose-700 rounded text-xs flex items-center justify-center font-bold border border-rose-300">原</div>
+<span>原件</span>
+</div>
+<span class="text-gray-300">|</span>
+<div class="flex items-center gap-1">
+<div class="w-5 h-5 bg-gray-100 text-gray-500 rounded text-xs flex items-center justify-center border border-gray-300">印</div>
+<span>复印件</span>
+</div>
+<span class="text-gray-300">|</span>
+<button onclick="showFilePickerHint()" class="shrink-0 text-xs text-blue-600 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded hover:bg-blue-100 transition-colors">选择文件</button>
+<span>选择本地文件路径（点条目内的按钮）</span>
+</div>
+
+<!-- 必备清单 -->
+<div>
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-rose-500"></div>
+<h2 class="text-lg font-bold text-rose-800">必备清单</h2>
+<span class="relative group cursor-help" title="面签时必须携带的材料，无则必拒">
+<svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+</span>
+</div>
+<button onclick="addItem('required')" class="flex items-center gap-1 text-sm bg-rose-500 text-white px-3 py-1.5 rounded-lg hover:bg-rose-600 transition-colors font-semibold shadow-sm">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+添加
+</button>
+</div>
+<div id="required-col" class="space-y-3 min-h-[300px] bg-white rounded-2xl p-4 border-2 border-rose-200 transition-all" ondragover="onDragOver(event)" ondrop="onDrop(event,'required')" ondragleave="onDragLeave(event)">
+<p class="text-center text-rose-300 text-sm py-12" id="required-empty">拖动条目到此处切换分类</p>
+</div>
+</div>
+
+<!-- 辅助材料 -->
+<div>
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-teal-500"></div>
+<h2 class="text-lg font-bold text-teal-800">辅助材料</h2>
+<span class="relative group cursor-help" title="有助于增强说服力的补充材料，提高通过率">
+<svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+</span>
+</div>
+<button onclick="addItem('supporting')" class="flex items-center gap-1 text-sm bg-teal-500 text-white px-3 py-1.5 rounded-lg hover:bg-teal-600 transition-colors font-semibold shadow-sm">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+添加
+</button>
+</div>
+<div id="supporting-col" class="space-y-3 min-h-[300px] bg-white rounded-2xl p-4 border-2 border-teal-200 transition-all" ondragover="onDragOver(event)" ondrop="onDrop(event,'supporting')" ondragleave="onDragLeave(event)">
+<p class="text-center text-teal-300 text-sm py-12" id="supporting-empty">拖动条目到此处切换分类</p>
+</div>
+</div>
+
+</div>
+
+<!-- ===== CASES PAGE ===== -->
+<div id="page-cases" class="hidden">
+
+<!-- Header -->
+<div class="flex items-center justify-between mb-6">
+<div>
+<h2 class="text-2xl font-bold text-gray-900">案例参考</h2>
+<p class="text-sm text-gray-600 mt-1">浏览并添加真实的 F1 面签经历</p>
+</div>
+<button onclick="openAddCase()" class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors font-semibold shadow-sm">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+新增案例
+</button>
+</div>
+
+<!-- Filters -->
+<div class="flex gap-3 mb-6">
+<button onclick="filterCases('all')" id="filter-all" class="px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white">全部</button>
+<button onclick="filterCases('approved')" id="filter-approved" class="px-4 py-2 rounded-lg text-sm font-semibold bg-white text-green-700 border-2 border-green-300 hover:bg-green-50">通过</button>
+<button onclick="filterCases('rejected')" id="filter-rejected" class="px-4 py-2 rounded-lg text-sm font-semibold bg-white text-red-700 border-2 border-red-300 hover:bg-red-50">拒签</button>
+</div>
+
+<!-- 通过 Section -->
+<div class="mb-8">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-3 h-3 rounded-full bg-green-500"></div>
+<h3 class="text-lg font-bold text-green-700">通过案例</h3>
+<span class="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full font-semibold" id="approved-count">0</span>
+</div>
+<div id="approved-cases-list" class="space-y-4">
+<p class="text-gray-300 text-center py-8 bg-white rounded-2xl border-2 border-dashed border-gray-200">暂无通过案例</p>
+</div>
+</div>
+
+<!-- 拒签 Section -->
+<div>
+<div class="flex items-center gap-2 mb-4">
+<div class="w-3 h-3 rounded-full bg-red-500"></div>
+<h3 class="text-lg font-bold text-red-700">拒签案例</h3>
+<span class="text-xs text-red-600 bg-red-100 px-2 py-0.5 rounded-full font-semibold" id="rejected-count">0</span>
+</div>
+<div id="rejected-cases-list" class="space-y-4">
+<p class="text-gray-300 text-center py-8 bg-white rounded-2xl border-2 border-dashed border-gray-200">暂无拒签案例</p>
+</div>
+</div>
+</div>
+
+<!-- ===== Q&A PAGE ===== -->
+<div id="page-qa" class="hidden">
+<div class="mb-6">
+<h2 class="text-2xl font-bold text-gray-900">常见面签问题</h2>
+<p class="text-sm text-gray-600 mt-1">分类整理的面签常见问题</p>
+</div>
+
+<div class="space-y-4" id="qa-list">
+</div>
+</div>
+
+<!-- ===== TEMPLATES PAGE ===== -->
+<div id="page-templates" class="hidden">
+<div class="mb-6">
+<h2 class="text-2xl font-bold text-gray-900">模板参考</h2>
+<p class="text-sm text-gray-500 mt-1">CV 和 Study Plan 模板参考</p>
+</div>
+
+<div class="flex flex-col gap-6">
+<!-- CV Template -->
+<div class="bg-white rounded-2xl shadow-sm p-6">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-3 h-3 rounded-full bg-purple-500"></div>
+<h3 class="text-lg font-bold text-gray-800">简历模板参考</h3>
+</div>
+<div class="text-sm text-gray-700 space-y-3">
+<p class="bg-gray-50 rounded-lg p-3 text-xs font-mono">CV用申请时候的那个的缩减版就行</p>
+<div>
+<p class="font-semibold text-gray-700 mb-2">Structure:</p>
+<div class="space-y-2 bg-gray-50 rounded-lg p-3 text-xs font-mono whitespace-pre-wrap">Name
+Contact Information
+
+Work Experience:
+- Every paid job, internship, research position
+- Title, organization, dates, responsibilities, projects
+
+Education:
+- Every school: degree, major, dates attended
+- Research projects / publications
+- Relevant coursework
+- Honors / awards
+
+Publications and Patents:
+- Title, journal/publisher, date, summary
+
+Professional Certifications:
+- Institution, date, qualification
+
+Awards, Interests, Skills:
+- Non-academic awards
+- Relevant interests
+- Skills (language, computer)
+- Organizations</div>
+</div>
+</div>
+</div>
+
+<!-- Study Plan Template -->
+<div class="bg-white rounded-2xl shadow-sm p-6">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-3 h-3 rounded-full bg-green-500"></div>
+<h3 class="text-lg font-bold text-gray-800">学习计划模板参考</h3>
+</div>
+<div class="text-sm text-gray-600 space-y-3">
+<p class="bg-gray-50 rounded-lg p-3 text-xs font-mono">Official USTravelDocs Template</p>
+<div class="space-y-3 bg-gray-50 rounded-lg p-3 text-xs font-mono">
+<p class="font-bold underline">1) Research Area of Interest and Major</p>
+<p>Explain your major and study plan — be as specific as possible</p>
+
+<p class="font-bold underline">2) Advisor or Potential Advisor</p>
+<p>Required for all graduate students</p>
+
+<p class="font-bold underline">3) Course List</p>
+<p>All courses you will attend (check program website)</p>
+
+<p class="font-bold underline">4) Research Project</p>
+<p>Project title and basic description</p>
+
+<p class="font-bold underline">5) Research Funding</p>
+<p>Where is the funding coming from?</p>
+
+<p class="font-bold underline">6) Practical Application of Research</p>
+<p>Real-world applications of your research</p>
+</div>
+</div>
+</div>
+
+<!-- USTravelDocs Requirements -->
+<div class="bg-white rounded-2xl shadow-sm p-6 md:col-span-2">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-3 h-3 rounded-full bg-amber-500"></div>
+<h3 class="text-lg font-bold text-gray-800">USTravelDocs 所需材料</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+<div class="bg-gray-50 rounded-lg p-3">
+<p class="font-semibold text-gray-700 mb-2">面签必备</p>
+<ul class="space-y-1 text-gray-600 text-xs">
+<li>• 经济/社会/家庭约束力文件 (proving return intent)</li>
+<li>• 资金证明 (first year expenses)</li>
+<li>• 银行文件 (originals only, no photocopies)</li>
+<li>• 如有资助人: 关系证明 + 纳税申报表原件</li>
+<li>• 学术文件: 成绩单(原件)、标准化考试分数、毕业文凭</li>
+<li>• 赴美学习计划 + 导师信息</li>
+<li>• 英语简历 + 出版物清单</li>
+<li>• I-20 签名原件</li>
+<li>• 导师简历/简介</li>
+</ul>
+</div>
+<div class="bg-amber-50 rounded-lg p-3">
+<p class="font-semibold text-amber-700 mb-2">注意事项</p>
+<ul class="space-y-1 text-amber-700 text-xs">
+<li>• 请勿使用虚假材料 (no fake documents)</li>
+<li>• 欺骗或歪曲事实可能导致永久拒签</li>
+<li>• 材料可密封带入领事馆 (sealed allowed)</li>
+<li>• 领事馆信息保密 (confidential)</li>
+<li>• 每个申请视为独立个案 (individual assessment)</li>
+<li>• 照片: 非必须 (photos may not be required)</li>
+<li>• 现金/笔: 备选但可能用不上</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div><!-- end max-w container -->
+
+<!-- ===== ADD ITEM MODAL ===== -->
+<div id="addItemModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+<div class="modal-overlay fixed inset-0 bg-black/40" onclick="closeAddItem()"></div>
+<div class="modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+<h3 class="text-lg font-bold text-gray-900 mb-4">新增条目</h3>
+<div class="space-y-4">
+<div>
+<label class="text-sm font-medium text-gray-700">物品名称</label>
+<input id="new-item-name" type="text" placeholder="例如：I-20（已签名）" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="text-sm font-medium text-gray-700">分类</label>
+<select id="new-item-category" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
+<option value="required">必备</option>
+<option value="supporting">辅助材料</option>
+</select>
+</div>
+<div>
+<label class="text-sm font-medium text-gray-700">获取要求/网址</label>
+<input id="new-item-acquisition" type="text" placeholder="要求页面或网址..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
+</div>
+<div>
+<label class="text-sm font-medium text-gray-700">数量</label>
+<input id="new-item-qty" type="number" value="1" min="1" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
+</div>
+</div>
+<div class="flex items-center justify-between">
+<label class="text-sm font-semibold text-gray-700">是否原件？</label>
+<div id="new-item-original" class="toggle bg-gray-300" onclick="toggleNewOriginal()"><div class="toggle-dot" style="left:2px"></div></div>
+</div>
+<div>
+<label class="text-sm font-medium text-gray-700">说明（可选）</label>
+<textarea id="new-item-description" rows="2" placeholder="补充说明..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
+</div>
+</div>
+<div class="flex gap-3 mt-6">
+<button onclick="closeAddItem()" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-50">取消</button>
+<button onclick="confirmAddItem()" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 shadow-sm">添加</button>
+</div>
+</div>
+</div>
+
+<!-- ===== ADD CASE MODAL ===== -->
+<div id="addCaseModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+<div class="modal-overlay fixed inset-0 bg-black/40" onclick="closeAddCase()"></div>
+<div class="modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
+<h3 class="text-lg font-bold text-gray-900 mb-4">新增面签案例</h3>
+<div class="space-y-4">
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="text-sm font-semibold text-gray-700">状态</label>
+<select id="case-status" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
+<option value="approved">通过</option>
+<option value="rejected">拒签</option>
+</select>
+</div>
+<div>
+<label class="text-sm font-semibold text-gray-700">日期</label>
+<input id="case-date" type="date" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
+</div>
+</div>
+<div class="grid grid-cols-3 gap-4">
+<div>
+<label class="text-sm font-semibold text-gray-700">窗口号</label>
+<input id="case-window" type="text" placeholder="15" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
+</div>
+<div>
+<label class="text-sm font-semibold text-gray-700">VO类型</label>
+<input id="case-vo" type="text" placeholder="白人男性" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
+</div>
+<div>
+<label class="text-sm font-semibold text-gray-700">时长</label>
+<input id="case-duration" type="text" placeholder="约2小时" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
+</div>
+</div>
+<div>
+<label class="text-sm font-semibold text-gray-700">准备的材料</label>
+<textarea id="case-prep" rows="2" placeholder="护照，I-20，CV..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
+</div>
+<div>
+<label class="text-sm font-semibold text-gray-700">用到的材料</label>
+<textarea id="case-used" rows="2" placeholder="护照，I-20..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
+</div>
+<div>
+<label class="text-sm font-semibold text-gray-700">没用上的材料</label>
+<textarea id="case-unused" rows="2" placeholder="照片，现金..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
+</div>
+<div>
+<label class="text-sm font-semibold text-gray-700">时间线</label>
+<textarea id="case-timeline" rows="2" placeholder="时间线..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
+</div>
+<div>
+<label class="text-sm font-semibold text-gray-700">面签过程</label>
+<textarea id="case-process" rows="4" placeholder="详细描述面签过程..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
+</div>
+<div>
+<label class="text-sm font-semibold text-gray-700">结果</label>
+<textarea id="case-result" rows="2" placeholder="结果..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
+</div>
+<div>
+<label class="text-sm font-semibold text-gray-700">小贴士</label>
+<textarea id="case-tips" rows="2" placeholder="小贴士..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
+</div>
+</div>
+<div class="flex gap-3 mt-6">
+<button onclick="closeAddCase()" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-50">取消</button>
+<button onclick="confirmAddCase()" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 shadow-sm">保存案例</button>
+</div>
+</div>
+</div>
+
+<!-- ===== SETTINGS MODAL ===== -->
+<div id="settingsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+<div class="modal-overlay fixed inset-0 bg-black/40" onclick="closeSettings()"></div>
+<div class="modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+<h3 class="text-lg font-bold text-gray-900 mb-4">设置</h3>
+<div class="space-y-4">
+<div>
+<label class="text-sm font-medium text-gray-700 mb-2 block">导出清单配置</label>
+<button onclick="exportConfig()" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 shadow-sm">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+下载 visa-config.json
+</button>
+</div>
+<div>
+<label class="text-sm font-semibold text-gray-700 mb-2 block">导入清单配置</label>
+<label class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 cursor-pointer">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+上传 visa-config.json
+<input type="file" accept=".json" onchange="importConfig(this)" class="hidden">
+</label>
+<button onclick="loadConfigFile()" class="w-full flex items-center justify-center gap-2 px-4 py-2 mt-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-100 border border-blue-200">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m0 0L8 8m4-4v12"/></svg>
+从 visa-config.json 加载（本地）
+</button>
+</div>
+<div class="border-t pt-4">
+<label class="text-sm font-medium text-gray-700 mb-2 block">案例数据</label>
+<div class="space-y-2">
+<button onclick="exportCases()" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+导出案例
+</button>
+<label class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 cursor-pointer">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+导入案例
+<input type="file" accept=".json" onchange="importCases(this)" class="hidden">
+</label>
+</div>
+</div>
+<div class="border-t pt-4">
+<button onclick="if(confirm('确定清除所有清单数据？此操作不可撤销！')){localStorage.removeItem('f1visa_items');localStorage.removeItem('f1visa_cases');location.reload();}" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+重置所有数据
+</button>
+<button onclick="if(confirm('将从 visa-config.json 重新加载清单（保留案例）？')){localStorage.removeItem('f1visa_items');location.reload();}" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100 mt-2">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+从配置文件重置清单
+</button>
+</div>
+</div>
+<div class="mt-6">
+<button onclick="closeSettings()" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">关闭</button>
+</div>
+</div>
+</div>
+
+<script>
+// ===== DATA =====
+var items = [];
+var cases = [];
+var currentFilter = 'all';
+var newOriginal = false;
+var newAcquisition = '';
+var draggedItemId = null;
+
+// ===== INIT =====
+function init() {
+loadItems();
+loadCases();
+renderQA();
+}
+
+// ===== STORAGE =====
+function saveItems() {
+localStorage.setItem('f1visa_items', JSON.stringify(items));
+}
+
+function saveCases() {
+localStorage.setItem('f1visa_cases', JSON.stringify(cases));
+}
+
+function loadItems() {
+var s = localStorage.getItem('f1visa_items');
+if (s) {
+items = JSON.parse(s);
+renderAll();
+return;
+}
+// Try fetch (async, modern)
+fetch('visa-config.json')
+.then(function(r) { return r.json(); })
+.then(function(data) {
+if (data.items && Array.isArray(data.items)) {
+items = data.items;
+saveItems();
+renderAll();
+} else {
+items = [];
+renderAll();
+}
+})
+.catch(function() {
+// Try XHR sync fallback (for some local server setups)
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'visa-config.json', false);
+xhr.send(null);
+if (xhr.status === 200) {
+try {
+var data = JSON.parse(xhr.responseText);
+if (data.items && Array.isArray(data.items)) {
+items = data.items;
+saveItems();
+renderAll();
+return;
+}
+} catch(e) {}
+}
+items = [];
+renderAll();
+});
+}
+
+function loadCases() {
+var s = localStorage.getItem('f1visa_cases');
+if (s) {
+cases = JSON.parse(s);
+return;
+}
+// Try fetch
+fetch('visa-config.json')
+.then(function(r) { return r.json(); })
+.then(function(data) {
+if (data.cases && Array.isArray(data.cases)) {
+cases = data.cases;
+saveCases();
+}
+})
+.catch(function() {
+// Try XHR sync fallback
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'visa-config.json', false);
+xhr.send(null);
+if (xhr.status === 200) {
+try {
+var data = JSON.parse(xhr.responseText);
+if (data.cases && Array.isArray(data.cases)) {
+cases = data.cases;
+saveCases();
+return;
+}
+} catch(e) {}
+}
+cases = [];
+});
+}
+
+// ===== UID =====
+function uid() {
+return 'i' + Math.random().toString(36).substr(2, 9);
+}
+
+// ===== RENDER =====
+function renderAll() {
+renderRequired();
+renderSupporting();
+renderCases();
+}
+
+function renderRequired() {
+var col = document.getElementById('required-col');
+var required = items.filter(function(it) { return it.category === 'required'; });
+
+if (required.length === 0) {
+col.innerHTML = '<p class="text-center text-gray-400 text-sm py-12" id="required-empty">拖动条目到此处切换分类</p>';
+return;
+}
+col.innerHTML = '';
+required.forEach(function(it) {
+col.appendChild(createItemCard(it));
+});
+}
+
+function renderSupporting() {
+var col = document.getElementById('supporting-col');
+var supporting = items.filter(function(it) { return it.category === 'supporting'; });
+
+if (supporting.length === 0) {
+col.innerHTML = '<p class="text-center text-gray-400 text-sm py-12" id="supporting-empty">拖动条目到此处切换分类</p>';
+return;
+}
+col.innerHTML = '';
+supporting.forEach(function(it) {
+col.appendChild(createItemCard(it));
+});
+}
+
+function createItemCard(it) {
+var catBorder = it.category === 'required' ? 'border-amber-400' : 'border-blue-400';
+var catBg     = it.category === 'required' ? 'bg-amber-50' : 'bg-blue-50';
+var originalBg   = it.isOriginal ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500';
+var originalText  = it.isOriginal ? '原件' : '复印件';
+
+var div = document.createElement('div');
+div.className = 'item-card sortable-item bg-white rounded-xl p-4 shadow-sm';
+div.id = 'item-' + it.id;
+div.setAttribute('data-id', it.id);
+
+div.innerHTML =
+'<div class="flex items-start gap-2 border-l-4 ' + catBorder + ' ' + catBg + ' rounded-r-xl px-4 py-3">' +
+'<div class="flex flex-col items-center gap-2 pt-1 shrink-0">' +
+'<div class="drag-handle text-gray-300 hover:text-gray-500 cursor-grab" title="拖动排序" draggable="true">:::</div>' +
+'<input type="checkbox" ' + (it.isReady ? 'checked' : '') + ' onchange="toggleReady(\'' + it.id + '\')" class="w-5 h-5 rounded border-2 border-gray-300 accent-blue-600 cursor-pointer">' +
+'</div>' +
+'<div class="flex-1 min-w-0 space-y-1">' +
+'<div class="item-meta-row">' +
+'<input type="text" value="' + escHtml(it.name) + '" onchange="updateItem(\'' + it.id + '\',\'name\',this.value)" class="item-name-input font-bold text-gray-900 bg-transparent border-0 text-base px-1 py-0.5 w-auto min-w-[120px] max-w-[300px] hover:bg-white focus:bg-white rounded">' +
+'<select onchange="updateItem(\'' + it.id + '\',\'isOriginal\',this.value===\'true\')" class="shrink-0 text-xs px-1.5 py-0.5 rounded font-bold border-0 cursor-pointer ' + originalBg + '">' +
+'<option value="true" ' + (it.isOriginal ? 'selected' : '') + '>原件</option>' +
+'<option value="false" ' + (!it.isOriginal ? 'selected' : '') + '>复印件</option>' +
+'</select>' +
+'<input type="number" value="' + it.quantity + '" min="1" max="99" onchange="updateItem(\'' + it.id + '\',\'quantity\',parseInt(this.value)||1)" class="shrink-0 text-xs w-12 px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 border-0 text-center hover:bg-white focus:bg-white">' +
+'</div>' +
+'<div class="flex items-center gap-2">' +
+'<span class="text-xs text-gray-400 shrink-0">文件路径</span>' +
+'<div class="flex-1 flex items-center gap-1.5 min-w-0">' +
+'<input type="text" value="' + escHtml(it.filePath) + '" onchange="updateItem(\'' + it.id + '\',\'filePath\',this.value)" placeholder="docs/..." class="flex-1 text-xs text-blue-600 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded hover:bg-white focus:bg-white focus:border-blue-400 w-full min-w-0" spellcheck="false">' +
+'<button onclick="pickFilePath(\'' + it.id + '\')" class="shrink-0 text-xs text-blue-600 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded hover:bg-blue-100 transition-colors" title="选择本地文件或文件夹">选择文件</button>' +
+'</div>' +
+'</div>' +
+'<div class="flex items-center gap-2">' +
+'<span class="text-xs text-gray-400 shrink-0">要求来源网站</span>' +
+'<input type="text" value="' + escHtml(it.acquisition) + '" onchange="updateItem(\'' + it.id + '\',\'acquisition\',this.value)" placeholder="获取方式/来源" class="flex-1 text-xs text-gray-500 bg-transparent border-0 px-1 py-0.5 hover:bg-white focus:bg-white rounded w-full">' +
+'</div>' +
+(it.description ? '<p class="text-xs text-gray-600 leading-relaxed px-1">' + escHtml(it.description) + '</p>' : '') +
+'</div>' +
+'<button onclick="deleteItem(\'' + it.id + '\')" class="shrink-0 text-gray-300 hover:text-red-500 transition-colors p-1 mt-1" title="删除">' +
+'<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' +
+'</button>' +
+'</div>';
+
+// Drag events (on the handle, not the whole card)
+var handle = div.querySelector('.drag-handle');
+handle.addEventListener('dragstart', function(e) {
+draggedItemId = it.id;
+div.classList.add('dragging');
+e.dataTransfer.effectAllowed = 'move';
+});
+handle.addEventListener('dragend', function() {
+div.classList.remove('dragging');
+draggedItemId = null;
+document.querySelectorAll('.drag-over').forEach(function(el) { el.classList.remove('drag-over'); });
+});
+
+return div;
+}
+
+function openFileLocation(id) {
+var it = items.find(function(item) { return item.id === id; });
+if (!it || !it.filePath) return;
+var fullPath = it.filePath.replace(/\\/g, '/');
+var dir = fullPath.substring(0, fullPath.lastIndexOf('/') + 1);
+var folderUrl = 'file:///' + (dir.startsWith('docs/') || dir.startsWith('docs\\') ? 'D:/VibeCoding/F1/' + dir : dir);
+window.location.href = folderUrl;
+}
+
+function updateItem(id, field, value) {
+items.forEach(function(it) {
+if (it.id === id) {
+it[field] = value;
+}
+});
+saveItems();
+renderAll();
+}
+
+function toggleReady(id) {
+items.forEach(function(it) {
+if (it.id === id) {
+it.isReady = !it.isReady;
+}
+});
+saveItems();
+renderAll();
+}
+
+function toggleOriginal(id) {
+items.forEach(function(it) {
+if (it.id === id) {
+it.isOriginal = !it.isOriginal;
+}
+});
+saveItems();
+renderAll();
+}
+
+function deleteItem(id) {
+if (!confirm('确定删除此条目？')) return;
+items = items.filter(function(it) { return it.id !== id; });
+saveItems();
+renderAll();
+}
+
+function addItem(category) {
+var name = prompt('Item name:');
+if (!name || !name.trim()) return;
+items.push({
+id: uid(),
+name: name.trim(),
+category: category,
+isOriginal: false,
+quantity: 1,
+filePath: '',
+isReady: false
+});
+saveItems();
+renderAll();
+}
+
+// ===== DRAG & DROP =====
+var _dragOverCardId = null;
+var _insertBefore = false;
+
+function onDragOver(e) {
+e.preventDefault();
+e.dataTransfer.dropEffect = 'move';
+// Remove old insert indicators
+document.querySelectorAll('.drag-insert-indicator').forEach(function(el) { el.remove(); });
+document.querySelectorAll('.drag-over-card').forEach(function(el) { el.classList.remove('drag-over-card'); });
+
+// Find which card we're over (not the dragged one)
+var target = e.target.closest('.sortable-item');
+if (!target || target.id === 'item-' + draggedItemId) {
+_dragOverCardId = null;
+return;
+}
+_dragOverCardId = target.getAttribute('data-id');
+// Insert before if mouse is in top half of card
+var rect = target.getBoundingClientRect();
+_insertBefore = e.clientY < rect.top + rect.height / 2;
+target.classList.add('drag-over-card');
+
+// Show insert indicator
+var indicator = document.createElement('div');
+indicator.className = 'drag-insert-indicator';
+indicator.style.cssText = 'height:3px;background:#6366f1;border-radius:2px;margin:4px 0;transition:all 0.1s;';
+if (_insertBefore) {
+target.parentNode.insertBefore(indicator, target);
+} else {
+target.parentNode.insertBefore(indicator, target.nextSibling);
+}
+}
+
+function onDragLeave(e) {
+if (!e.currentTarget.contains(e.relatedTarget)) {
+e.currentTarget.classList.remove('drag-over');
+document.querySelectorAll('.drag-insert-indicator').forEach(function(el) { el.remove(); });
+document.querySelectorAll('.drag-over-card').forEach(function(el) { el.classList.remove('drag-over-card'); });
+_dragOverCardId = null;
+}
+}
+
+function onDrop(e, targetCategory) {
+e.preventDefault();
+e.currentTarget.classList.remove('drag-over');
+document.querySelectorAll('.drag-insert-indicator').forEach(function(el) { el.remove(); });
+document.querySelectorAll('.drag-over-card').forEach(function(el) { el.classList.remove('drag-over-card'); });
+if (!draggedItemId) return;
+
+var draggedItem = items.find(function(it) { return it.id === draggedItemId; });
+if (!draggedItem) return;
+
+var srcCategory = draggedItem.category;
+
+// Remove from array
+items = items.filter(function(it) { return it.id !== draggedItemId; });
+
+if (srcCategory === targetCategory) {
+// Same column: reorder at correct position
+var colItems = items.filter(function(it) { return it.category === targetCategory; });
+var otherItems = items.filter(function(it) { return it.category !== targetCategory; });
+
+if (_dragOverCardId) {
+var insertIdx = colItems.findIndex(function(it) { return it.id === _dragOverCardId; });
+if (insertIdx === -1) insertIdx = colItems.length;
+if (_insertBefore) {
+colItems.splice(insertIdx, 0, draggedItem);
+} else {
+colItems.splice(insertIdx + 1, 0, draggedItem);
+}
+} else {
+colItems.push(draggedItem);
+}
+items = otherItems.concat(colItems);
+} else {
+// Different column: change category
+draggedItem.category = targetCategory;
+var colItems = items.filter(function(it) { return it.category === targetCategory; });
+var otherItems = items.filter(function(it) { return it.category !== targetCategory; });
+
+if (_dragOverCardId) {
+var insertIdx = colItems.findIndex(function(it) { return it.id === _dragOverCardId; });
+if (insertIdx === -1) insertIdx = colItems.length;
+if (_insertBefore) {
+colItems.splice(insertIdx, 0, draggedItem);
+} else {
+colItems.splice(insertIdx + 1, 0, draggedItem);
+}
+} else {
+colItems.push(draggedItem);
+}
+items = otherItems.concat(colItems);
+}
+_dragOverCardId = null;
+saveItems();
+renderAll();
+}
+
+// ===== TABS =====
+function showTab(tab) {
+document.getElementById('page-checklist').className = tab === 'checklist' ? 'block' : 'hidden';
+document.getElementById('page-cases').className = tab === 'cases' ? 'block' : 'hidden';
+document.getElementById('page-qa').className = tab === 'qa' ? 'block' : 'hidden';
+document.getElementById('page-templates').className = tab === 'templates' ? 'block' : 'hidden';
+
+document.getElementById('btn-checklist').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-medium ' + (tab === 'checklist' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200');
+document.getElementById('btn-cases').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-medium ' + (tab === 'cases' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200');
+document.getElementById('btn-qa').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-medium ' + (tab === 'qa' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200');
+document.getElementById('btn-templates').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-medium ' + (tab === 'templates' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200');
+}
+
+// ===== Q&A =====
+var qaData = [
+{category:'对来美目的提问',questions:['What will you study in the United States?','What are you going to study in USA?','What do you want to study in USA?','What will you do in USA?']},
+{category:'签证目的提问',questions:['What is your purpose for this visa?','Why go to US?','Why need a PhD degree?']},
+{category:'对现在的行为和地点提问',questions:['Where do you study right now?','What/where are you studying now?']},
+{category:'对留美时间提问',questions:['How long will you study in USA?','When will you go to the US?','When will this program start?']},
+{category:'对学习计划提问',questions:['Your study plan?','What do you do with your work for PhD?']},
+{category:'对研究方向提问',questions:['What do you study?','Tell me more about your research. / Explain your research.',"What's your study about?",'Do you have your resume/CV/study plan?','Describe briefly your current research / future research.','What is your dissertation about?']},
+{category:'对背景/现有学位提问',questions:['What is your academic background?','When/where did you get your BS/MS?','Do you have a master degree?']},
+{category:'对选择美国提问',questions:['Why do you want to study in USA / in the US?']},
+{category:'对美国学校提问',questions:['Tell me about your program. (回答专业和研究方向)','How do you find/know this Univ.?','Why do you choose this university / school?','How many colleges did you apply to?','How many schools did you get admitted to?','Why not continue your studies in China?']},
+{category:'对学习专业提问',questions:['What is your major?','In what aspect of your major will you study?']},
+{category:'对是否换专业提问',questions:['You studied xxx as an undergraduate. Why do you want to change it to yyy?',"What's the difference between your major now and the major in USA?",'Why do you choose a different major?','Why do you choose this major?']},
+{category:'对gap year提问',questions:['Why did you take one year off?']},
+{category:'对回国计划提问',questions:["What's your plan after graduation?",'What is your future plan?','What will you do after graduation?','Do you plan to seek employment in the US after you have completed your studies?']},
+{category:'对回国原因提问',questions:['Give me three reasons that you will come back to China?','Will you come back to home during vacations/holidays?']},
+{category:'关于财力证明提问',questions:['How do you pay for the travel expenses?','Who will pay for your study in the US?','Who will fund you / support you / be your sponsor?','Do you have a bank deposit certification? —— Yes, here it is.']},
+{category:'关于旅游史提问',questions:['What countries have you been to? —— None, Only China.','Have you ever been to outside of China / any other country? —— None, Only China.','Have you ever been to America? / Have you been to the United States before? —— No, I have never been there before.']},
+{category:'关于父母提问',questions:["What's your parents job? (具体做什么工作？)",'Do you have any relatives in the US?']}
+];
+
+function renderQA() {
+var container = document.getElementById('qa-list');
+container.innerHTML = '';
+qaData.forEach(function(group, gi) {
+var section = document.createElement('div');
+section.className = 'bg-white rounded-2xl shadow-sm overflow-hidden mb-4';
+section.innerHTML =
+'<button onclick="toggleQA(' + gi + ')" class="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors text-left">' +
+'<div class="flex items-center gap-3">' +
+'<div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-bold">' + (gi + 1) + '</div>' +
+'<span class="font-semibold text-gray-800">' + group.category + '</span>' +
+'<span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">' + group.questions.length + '</span>' +
+'</div>' +
+'<svg id="qa-arrow-' + gi + '" class="w-5 h-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>' +
+'</button>' +
+'<div id="qa-content-' + gi + '" class="hidden border-t border-gray-100 p-4">' +
+'<div class="space-y-2">' +
+group.questions.map(function(q) {
+return '<div class="flex items-start gap-2 p-2 bg-gray-50 rounded-lg"><span class="text-indigo-400 mt-0.5">Q:</span><span class="text-sm text-gray-700">' + q + '</span></div>';
+}).join('') +
+'</div>' +
+'</div>';
+container.appendChild(section);
+});
+}
+
+window.toggleQaStates = {};
+
+function toggleQA(idx) {
+var content = document.getElementById('qa-content-' + idx);
+var arrow = document.getElementById('qa-arrow-' + idx);
+if (content.classList.contains('hidden')) {
+content.classList.remove('hidden');
+arrow.style.transform = 'rotate(180deg)';
+} else {
+content.classList.add('hidden');
+arrow.style.transform = 'rotate(0deg)';
+}
+}
+
+// ===== CASES =====
+function renderCases() {
+var approved = cases.filter(function(c) { return c.status === 'approved'; });
+var rejected = cases.filter(function(c) { return c.status === 'rejected'; });
+document.getElementById('approved-count').textContent = approved.length;
+document.getElementById('rejected-count').textContent = rejected.length;
+
+var approvedList = document.getElementById('approved-cases-list');
+var rejectedList = document.getElementById('rejected-cases-list');
+
+if (approved.length === 0) {
+approvedList.innerHTML = '<p class="text-gray-300 text-center py-8 bg-white rounded-2xl border-2 border-dashed border-gray-200">暂无通过案例</p>';
+} else {
+approvedList.innerHTML = '';
+approved.forEach(function(c, i) { approvedList.appendChild(createCaseCard(c, i)); });
+}
+
+if (rejected.length === 0) {
+rejectedList.innerHTML = '<p class="text-gray-300 text-center py-8 bg-white rounded-2xl border-2 border-dashed border-gray-200">暂无拒签案例</p>';
+} else {
+rejectedList.innerHTML = '';
+rejected.forEach(function(c, i) { rejectedList.appendChild(createCaseCard(c, i)); });
+}
+}
+
+function createCaseCard(c, idx) {
+var isApproved = c.result === 'approved';
+var cardBorder = isApproved ? 'border-l-4 border-l-green-500' : 'border-l-4 border-l-red-500';
+var badgeClass = isApproved ? 'bg-green-100 text-green-800 border-green-300' : 'bg-red-100 text-red-700 border-red-300';
+var badgeText = isApproved ? '通过' : '拒签';
+var div = document.createElement('div');
+div.className = 'bg-white rounded-2xl shadow-sm p-5 case-enter border border-gray-200 ' + cardBorder;
+div.innerHTML =
+'<div class="flex items-start justify-between mb-3">' +
+'<div>' +
+'<span class="text-xs text-gray-500 font-medium">' + c.date + '</span>' +
+'<span class="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full font-bold border border-green-300">' + badgeText + '</span>' +
+'</div>' +
+'<button onclick="deleteCase(' + idx + ')" class="text-gray-300 hover:text-red-500"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>' +
+'</div>' +
+'<div class="grid grid-cols-3 gap-2 mb-3 text-sm">' +
+(c.window ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">领事馆</span><p class="font-semibold text-gray-800">' + c.window + '</p></div>' : '') +
+(c.vo ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">VO</span><p class="font-semibold text-gray-800">' + c.vo + '</p></div>' : '') +
+(c.duration ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">时长</span><p class="font-semibold text-gray-800">' + c.duration + '</p></div>' : '') +
+'</div>' +
+(c.prep ? '<div class="mb-2"><span class="text-sm font-bold text-rose-600">准备:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + c.prep + '</p></div>' : '') +
+(c.used ? '<div class="mb-2"><span class="text-sm font-bold text-green-600">用到:</span><p class="text-sm text-gray-700 mt-0.5 font-medium leading-relaxed">' + c.used + '</p></div>' : '') +
+(c.unused ? '<div class="mb-2"><span class="text-sm font-bold text-gray-400">没用:</span><p class="text-sm text-gray-500 mt-0.5 leading-relaxed">' + c.unused + '</p></div>' : '') +
+(c.timeline ? '<div class="mb-2"><span class="text-sm font-bold text-purple-600">时间线:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + c.timeline + '</p></div>' : '') +
+(c.process ? '<div class="mb-2"><span class="text-sm font-bold text-orange-600">过程:</span><p class="text-sm text-gray-700 mt-0.5 whitespace-pre-wrap leading-relaxed">' + c.process + '</p></div>' : '') +
+(c.result ? '<div class="mb-2"><span class="text-sm font-bold text-indigo-600">结果:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + c.result + '</p></div>' : '') +
+(c.tips ? '<div class="bg-amber-50 rounded-lg p-3 mt-2 border border-amber-200"><span class="text-sm font-bold text-amber-700">贴士:</span><p class="text-sm text-amber-800 mt-0.5 leading-relaxed">' + c.tips + '</p></div>' : '');
+return div;
+}
+
+function filterCases(f) {
+currentFilter = f;
+document.getElementById('filter-all').className = 'px-4 py-2 rounded-lg text-sm font-semibold ' + (f === 'all' ? 'bg-blue-600 text-white' : 'bg-white text-blue-700 border-2 border-blue-300 hover:bg-blue-50');
+document.getElementById('filter-approved').className = 'px-4 py-2 rounded-lg text-sm font-semibold ' + (f === 'approved' ? 'bg-green-600 text-white' : 'bg-white text-green-700 border-2 border-green-300 hover:bg-green-50');
+document.getElementById('filter-rejected').className = 'px-4 py-2 rounded-lg text-sm font-semibold ' + (f === 'rejected' ? 'bg-red-600 text-white' : 'bg-white text-red-700 border-2 border-red-300 hover:bg-red-50');
+
+var approved = document.getElementById('approved-cases-list');
+var rejected = document.getElementById('rejected-cases-list');
+if (f === 'rejected') {
+approved.style.display = 'none';
+rejected.style.display = 'block';
+} else if (f === 'approved') {
+approved.style.display = 'block';
+rejected.style.display = 'none';
+} else {
+approved.style.display = 'block';
+rejected.style.display = 'block';
+}
+}
+
+function openAddCase() {
+document.getElementById('case-date').valueAsDate = new Date();
+document.getElementById('addCaseModal').classList.remove('hidden');
+}
+
+function closeAddCase() {
+document.getElementById('addCaseModal').classList.add('hidden');
+}
+
+function confirmAddCase() {
+var status = document.getElementById('case-status').value;
+var date = document.getElementById('case-date').value;
+var window = document.getElementById('case-window').value.trim();
+var vo = document.getElementById('case-vo').value.trim();
+var duration = document.getElementById('case-duration').value.trim();
+var prep = document.getElementById('case-prep').value.trim();
+var used = document.getElementById('case-used').value.trim();
+var unused = document.getElementById('case-unused').value.trim();
+var timeline = document.getElementById('case-timeline').value.trim();
+var process = document.getElementById('case-process').value.trim();
+var result = document.getElementById('case-result').value.trim();
+var tips = document.getElementById('case-tips').value.trim();
+
+if (!date) { alert('请选择日期'); return; }
+
+cases.push({status, date, window, vo, duration, prep, used, unused, timeline, process, result, tips});
+saveCases();
+renderCases();
+closeAddCase();
+closeAddCase(); // double close to ensure
+
+// Clear fields
+['case-window','case-vo','case-duration','case-prep','case-used','case-unused','case-timeline','case-process','case-result','case-tips'].forEach(function(id) {
+document.getElementById(id).value = '';
+});
+}
+
+function deleteCase(idx) {
+if (!confirm('确定删除此案例？')) return;
+cases.splice(idx, 1);
+saveCases();
+renderCases();
+}
+
+// ===== SETTINGS =====
+function showSettings() {
+document.getElementById('settingsModal').classList.remove('hidden');
+}
+function closeSettings() {
+document.getElementById('settingsModal').classList.add('hidden');
+}
+
+function loadConfigFile() {
+var input = document.createElement('input');
+input.type = 'file';
+input.accept = '.json';
+input.onchange = function(e) {
+var file = e.target.files[0];
+if (!file) return;
+var reader = new FileReader();
+reader.onload = function(ev) {
+try {
+var data = JSON.parse(ev.target.result);
+if (data.items && Array.isArray(data.items)) {
+if (confirm('将加载 ' + data.items.length + ' 条清单，导入到 localStorage？')) {
+items = data.items;
+saveItems();
+renderAll();
+alert('加载成功！');
+}
+} else {
+alert('无效的配置文件');
+}
+} catch(err) {
+alert('读取文件出错：' + err.message);
+}
+};
+reader.readAsText(file);
+};
+input.click();
+}
+
+function exportConfig() {
+var data = {version: 1, items: items, exportedAt: new Date().toISOString()};
+var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+var a = document.createElement('a');
+a.href = URL.createObjectURL(blob);
+a.download = 'visa-config.json';
+a.click();
+}
+
+function importConfig(input) {
+var file = input.files[0];
+if (!file) return;
+var reader = new FileReader();
+reader.onload = function(e) {
+try {
+var data = JSON.parse(e.target.result);
+if (data.items && Array.isArray(data.items)) {
+if (confirm('导入 ' + data.items.length + ' 条清单？将覆盖现有数据。')) {
+items = data.items;
+saveItems();
+renderAll();
+alert('导入成功！');
+}
+} else {
+alert('无效的配置文件');
+}
+} catch(err) {
+alert('读取文件出错：' + err.message);
+}
+};
+reader.readAsText(file);
+}
+
+function exportCases() {
+var data = {cases: cases, exportedAt: new Date().toISOString()};
+var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+var a = document.createElement('a');
+a.href = URL.createObjectURL(blob);
+a.download = 'visa-cases.json';
+a.click();
+}
+
+function importCases(input) {
+var file = input.files[0];
+if (!file) return;
+var reader = new FileReader();
+reader.onload = function(e) {
+try {
+var data = JSON.parse(e.target.result);
+if (data.cases && Array.isArray(data.cases)) {
+if (confirm('导入 ' + data.cases.length + ' 个案例？将覆盖现有案例。')) {
+cases = data.cases;
+saveCases();
+renderCases();
+alert('导入成功！');
+}
+} else {
+alert('无效的案例文件');
+}
+} catch(err) {
+alert('Error reading file: ' + err.message);
+}
+};
+reader.readAsText(file);
+}
+
+// ===== ADD ITEM MODAL =====
+function toggleNewOriginal() {
+newOriginal = !newOriginal;
+var toggle = document.getElementById('new-item-original');
+toggle.className = 'toggle ' + (newOriginal ? 'bg-red-500' : 'bg-gray-200');
+toggle.querySelector('.toggle-dot').style.left = newOriginal ? '22px' : '2px';
+}
+
+function closeAddItem() {
+document.getElementById('addItemModal').classList.add('hidden');
+newOriginal = false;
+var t = document.getElementById('new-item-original');
+t.className = 'toggle bg-gray-200';
+t.querySelector('.toggle-dot').style.left = '2px';
+document.getElementById('new-item-name').value = '';
+document.getElementById('new-item-category').value = 'required';
+document.getElementById('new-item-qty').value = '1';
+document.getElementById('new-item-acquisition').value = '';
+document.getElementById('new-item-description').value = '';
+}
+
+function confirmAddItem() {
+var name = document.getElementById('new-item-name').value.trim();
+var category = document.getElementById('new-item-category').value;
+var qty = parseInt(document.getElementById('new-item-qty').value) || 1;
+var acquisition = document.getElementById('new-item-acquisition').value.trim();
+var description = document.getElementById('new-item-description').value.trim();
+if (!name) { alert('请输入物品名称'); return; }
+items.push({
+id: uid(),
+name: name,
+category: category,
+isOriginal: newOriginal,
+quantity: qty,
+filePath: '',
+acquisition: acquisition,
+description: description,
+isReady: false
+});
+saveItems();
+renderAll();
+closeAddItem();
+}
+
+// ===== FILE PICKER =====
+var _pickerItemId = null;
+document.getElementById('filePicker').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (file && _pickerItemId) {
+    var name = file.name;
+    // webkitRelativePath gives path relative to the selected folder, e.g. "images/photo.jpg"
+    var rel = file.webkitRelativePath || '';
+    var guess;
+    if (rel && rel !== name) {
+      // User picked a folder first; use the relative path as-is
+      guess = rel;
+    } else {
+      // Single file picked directly
+      guess = 'docs/';
+      if (name.match(/\.(pdf|doc|docx)$/i)) guess += 'documents/' + name;
+      else if (name.match(/\.(jpg|jpeg|png)$/i)) guess += 'images/' + name;
+      else guess += name;
+    }
+    updateItem(_pickerItemId, 'filePath', guess);
+  }
+  _pickerItemId = null;
+  e.target.value = '';
+});
+
+function pickFilePath(itemId) {
+  _pickerItemId = itemId;
+  document.getElementById('filePicker').click();
+}
+
+function showFilePickerHint() {
+  alert('请在清单条目内点击"选择文件"按钮来设置该条目的文件路径。');
+}
+
+// ===== UTILS =====
+function escHtml(s) {
+if (!s) return '';
+return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toggleLegend(el) {
+// No-op, just visual feedback
+}
+
+// ===== START =====
+init();
+</script>
+</body>
+</html>

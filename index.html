@@ -4,22 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>F1 签证清单</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="dist/styles.css">
 <style>
-.drag-over { background: #dbeafe !important; border: 2px dashed #2563eb !important; }
-.dragging { opacity: 0.4; }
-.sortable-item { cursor: default; }
-.drag-over-card { outline: 2px dashed #6366f1; outline-offset: -2px; }
-.drag-handle { cursor: grab; user-select: none; }
-.drag-handle:active { cursor: grabbing; }
-.sortable-item:active { cursor: grabbing; }
 .item-card { transition: all 0.2s; border-left: 4px solid transparent; }
-.item-card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
-input[type="text"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-radius: 4px; }
-input[type="number"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-radius: 4px; }
-textarea:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-radius: 4px; }
-.badge { transition: all 0.2s; }
 input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
+input[type="checkbox"][disabled] { cursor: default; }
 .modal-overlay { animation: fadeIn 0.15s ease; }
 .modal-content { animation: slideUp 0.2s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -46,7 +35,6 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
-  /* Nav: wrap buttons to next line, shrink title on very small screens */
   nav .flex.items-center.justify-between {
     flex-wrap: wrap !important;
     height: auto !important;
@@ -65,17 +53,7 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
     font-size: 0.7rem !important;
     padding: 5px 8px !important;
   }
-  button[onclick="exportConfig()"] {
-    padding: 5px 8px !important;
-  }
-  button[onclick="exportConfig()"] svg + span {
-    display: none !important;
-  }
 
-  /* Item cards: hide drag handle, compact layout */
-  .sortable-item .drag-handle {
-    display: none !important;
-  }
   .sortable-item .flex-col {
     flex-direction: row !important;
     align-items: center !important;
@@ -86,7 +64,6 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
   .sortable-item select {
     font-size: 0.8rem !important;
   }
-  /* Item meta: name takes full width, original/qty on next row */
   .item-meta-row {
     flex-direction: column !important;
     align-items: flex-start !important;
@@ -96,7 +73,6 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
     min-width: unset !important;
   }
 
-  /* Modals: full-width with small margin */
   .modal-content {
     margin: 8px !important;
     max-width: calc(100vw - 16px) !important;
@@ -104,7 +80,6 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
     max-height: calc(100vh - 32px) !important;
   }
 
-  /* Case cards: reduce padding */
   .case-enter {
     padding: 12px !important;
   }
@@ -115,7 +90,6 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
     grid-template-columns: 1fr !important;
   }
 
-  /* QA accordion: compact text */
   .bg-white.rounded-2xl.shadow-sm.overflow-hidden.mb-4 button {
     padding: 12px !important;
   }
@@ -123,9 +97,6 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
 </style>
 </head>
 <body class="min-h-screen bg-white">
-
-<!-- Hidden file picker for folder selection -->
-<input type="file" id="filePicker" style="display:none" webkitdirectory multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx">
 
 <!-- Top Nav -->
 <nav class="bg-sky-50 border-b-2 border-sky-200 sticky top-0 z-50 shadow-sm">
@@ -140,13 +111,6 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
 <button onclick="showTab('cases')" id="btn-cases" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm">案例</button>
 <button onclick="showTab('qa')" id="btn-qa" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm">问答</button>
 <button onclick="showTab('templates')" id="btn-templates" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm">模板</button>
-<button onclick="showSettings()" class="p-2 rounded-lg text-blue-600 hover:bg-blue-100" title="设置">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-</button>
-<button onclick="exportConfig()" class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold bg-green-600 text-white hover:bg-green-700 shadow-sm" title="保存配置">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-保存配置
-</button>
 </div>
 </div>
 </div>
@@ -175,9 +139,6 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
 <div class="w-5 h-5 bg-gray-100 text-gray-500 rounded text-xs flex items-center justify-center border border-gray-300">印</div>
 <span>复印件</span>
 </div>
-<span class="text-gray-300">|</span>
-<button onclick="showFilePickerHint()" class="shrink-0 text-xs text-blue-600 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded hover:bg-blue-100 transition-colors">选择文件</button>
-<span>选择本地文件路径（点条目内的按钮）</span>
 </div>
 
 <!-- 必备清单 -->
@@ -190,13 +151,9 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
 <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
 </span>
 </div>
-<button onclick="addItem('required')" class="flex items-center gap-1 text-sm bg-rose-500 text-white px-3 py-1.5 rounded-lg hover:bg-rose-600 transition-colors font-semibold shadow-sm">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-添加
-</button>
 </div>
-<div id="required-col" class="space-y-3 min-h-[300px] bg-white rounded-2xl p-4 border-2 border-rose-200 transition-all" ondragover="onDragOver(event)" ondrop="onDrop(event,'required')" ondragleave="onDragLeave(event)">
-<p class="text-center text-rose-300 text-sm py-12" id="required-empty">拖动条目到此处切换分类</p>
+<div id="required-col" class="space-y-3 min-h-[300px] bg-white rounded-2xl p-4 border-2 border-rose-200 transition-all">
+<p class="text-center text-rose-300 text-sm py-12">加载中...</p>
 </div>
 </div>
 
@@ -210,13 +167,9 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
 <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
 </span>
 </div>
-<button onclick="addItem('supporting')" class="flex items-center gap-1 text-sm bg-teal-500 text-white px-3 py-1.5 rounded-lg hover:bg-teal-600 transition-colors font-semibold shadow-sm">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-添加
-</button>
 </div>
-<div id="supporting-col" class="space-y-3 min-h-[300px] bg-white rounded-2xl p-4 border-2 border-teal-200 transition-all" ondragover="onDragOver(event)" ondrop="onDrop(event,'supporting')" ondragleave="onDragLeave(event)">
-<p class="text-center text-teal-300 text-sm py-12" id="supporting-empty">拖动条目到此处切换分类</p>
+<div id="supporting-col" class="space-y-3 min-h-[300px] bg-white rounded-2xl p-4 border-2 border-teal-200 transition-all">
+<p class="text-center text-teal-300 text-sm py-12">加载中...</p>
 </div>
 </div>
 
@@ -231,10 +184,6 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
 <h2 class="text-2xl font-bold text-gray-900">案例参考</h2>
 <p class="text-sm text-gray-600 mt-1">浏览并添加真实的 F1 面签经历</p>
 </div>
-<button onclick="openAddCase()" class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors font-semibold shadow-sm">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-新增案例
-</button>
 </div>
 
 <!-- Filters -->
@@ -396,182 +345,11 @@ Awards, Interests, Skills:
 
 </div><!-- end max-w container -->
 
-<!-- ===== ADD ITEM MODAL ===== -->
-<div id="addItemModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-<div class="modal-overlay fixed inset-0 bg-black/40" onclick="closeAddItem()"></div>
-<div class="modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
-<h3 class="text-lg font-bold text-gray-900 mb-4">新增条目</h3>
-<div class="space-y-4">
-<div>
-<label class="text-sm font-medium text-gray-700">物品名称</label>
-<input id="new-item-name" type="text" placeholder="例如：I-20（已签名）" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
-</div>
-<div class="grid grid-cols-2 gap-4">
-<div>
-<label class="text-sm font-medium text-gray-700">分类</label>
-<select id="new-item-category" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
-<option value="required">必备</option>
-<option value="supporting">辅助材料</option>
-</select>
-</div>
-<div>
-<label class="text-sm font-medium text-gray-700">获取要求/网址</label>
-<input id="new-item-acquisition" type="text" placeholder="要求页面或网址..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
-</div>
-<div>
-<label class="text-sm font-medium text-gray-700">数量</label>
-<input id="new-item-qty" type="number" value="1" min="1" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
-</div>
-</div>
-<div class="flex items-center justify-between">
-<label class="text-sm font-semibold text-gray-700">是否原件？</label>
-<div id="new-item-original" class="toggle bg-gray-300" onclick="toggleNewOriginal()"><div class="toggle-dot" style="left:2px"></div></div>
-</div>
-<div>
-<label class="text-sm font-medium text-gray-700">说明（可选）</label>
-<textarea id="new-item-description" rows="2" placeholder="补充说明..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
-</div>
-</div>
-<div class="flex gap-3 mt-6">
-<button onclick="closeAddItem()" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-50">取消</button>
-<button onclick="confirmAddItem()" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 shadow-sm">添加</button>
-</div>
-</div>
-</div>
-
-<!-- ===== ADD CASE MODAL ===== -->
-<div id="addCaseModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-<div class="modal-overlay fixed inset-0 bg-black/40" onclick="closeAddCase()"></div>
-<div class="modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
-<h3 class="text-lg font-bold text-gray-900 mb-4">新增面签案例</h3>
-<div class="space-y-4">
-<div class="grid grid-cols-2 gap-4">
-<div>
-<label class="text-sm font-semibold text-gray-700">状态</label>
-<select id="case-status" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
-<option value="approved">通过</option>
-<option value="rejected">拒签</option>
-</select>
-</div>
-<div>
-<label class="text-sm font-semibold text-gray-700">日期</label>
-<input id="case-date" type="date" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
-</div>
-</div>
-<div class="grid grid-cols-3 gap-4">
-<div>
-<label class="text-sm font-semibold text-gray-700">窗口号</label>
-<input id="case-window" type="text" placeholder="15" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
-</div>
-<div>
-<label class="text-sm font-semibold text-gray-700">VO类型</label>
-<input id="case-vo" type="text" placeholder="白人男性" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
-</div>
-<div>
-<label class="text-sm font-semibold text-gray-700">时长</label>
-<input id="case-duration" type="text" placeholder="约2小时" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
-</div>
-</div>
-<div>
-<label class="text-sm font-semibold text-gray-700">准备的材料</label>
-<textarea id="case-prep" rows="2" placeholder="护照，I-20，CV..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
-</div>
-<div>
-<label class="text-sm font-semibold text-gray-700">用到的材料</label>
-<textarea id="case-used" rows="2" placeholder="护照，I-20..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
-</div>
-<div>
-<label class="text-sm font-semibold text-gray-700">没用上的材料</label>
-<textarea id="case-unused" rows="2" placeholder="照片，现金..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
-</div>
-<div>
-<label class="text-sm font-semibold text-gray-700">时间线</label>
-<textarea id="case-timeline" rows="2" placeholder="时间线..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
-</div>
-<div>
-<label class="text-sm font-semibold text-gray-700">面签过程</label>
-<textarea id="case-process" rows="4" placeholder="详细描述面签过程..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
-</div>
-<div>
-<label class="text-sm font-semibold text-gray-700">结果</label>
-<textarea id="case-result" rows="2" placeholder="结果..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
-</div>
-<div>
-<label class="text-sm font-semibold text-gray-700">小贴士</label>
-<textarea id="case-tips" rows="2" placeholder="小贴士..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
-</div>
-</div>
-<div class="flex gap-3 mt-6">
-<button onclick="closeAddCase()" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-50">取消</button>
-<button onclick="confirmAddCase()" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 shadow-sm">保存案例</button>
-</div>
-</div>
-</div>
-
-<!-- ===== SETTINGS MODAL ===== -->
-<div id="settingsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-<div class="modal-overlay fixed inset-0 bg-black/40" onclick="closeSettings()"></div>
-<div class="modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
-<h3 class="text-lg font-bold text-gray-900 mb-4">设置</h3>
-<div class="space-y-4">
-<div>
-<label class="text-sm font-medium text-gray-700 mb-2 block">导出清单配置</label>
-<button onclick="exportConfig()" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 shadow-sm">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-下载 visa-config.json
-</button>
-</div>
-<div>
-<label class="text-sm font-semibold text-gray-700 mb-2 block">导入清单配置</label>
-<label class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 cursor-pointer">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-上传 visa-config.json
-<input type="file" accept=".json" onchange="importConfig(this)" class="hidden">
-</label>
-<button onclick="loadConfigFile()" class="w-full flex items-center justify-center gap-2 px-4 py-2 mt-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-100 border border-blue-200">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m0 0L8 8m4-4v12"/></svg>
-从 visa-config.json 加载（本地）
-</button>
-</div>
-<div class="border-t pt-4">
-<label class="text-sm font-medium text-gray-700 mb-2 block">案例数据</label>
-<div class="space-y-2">
-<button onclick="exportCases()" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-导出案例
-</button>
-<label class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 cursor-pointer">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-导入案例
-<input type="file" accept=".json" onchange="importCases(this)" class="hidden">
-</label>
-</div>
-</div>
-<div class="border-t pt-4">
-<button onclick="if(confirm('确定清除所有清单数据？此操作不可撤销！')){localStorage.removeItem('f1visa_items');localStorage.removeItem('f1visa_cases');location.reload();}" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-重置所有数据
-</button>
-<button onclick="if(confirm('将从 visa-config.json 重新加载清单（保留案例）？')){localStorage.removeItem('f1visa_items');location.reload();}" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100 mt-2">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-从配置文件重置清单
-</button>
-</div>
-</div>
-<div class="mt-6">
-<button onclick="closeSettings()" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">关闭</button>
-</div>
-</div>
-</div>
-
 <script>
 // ===== DATA =====
 var items = [];
 var cases = [];
 var currentFilter = 'all';
-var newOriginal = false;
-var newAcquisition = '';
-var draggedItemId = null;
 
 // ===== INIT =====
 function init() {
@@ -581,28 +359,12 @@ renderQA();
 }
 
 // ===== STORAGE =====
-function saveItems() {
-localStorage.setItem('f1visa_items', JSON.stringify(items));
-}
-
-function saveCases() {
-localStorage.setItem('f1visa_cases', JSON.stringify(cases));
-}
-
 function loadItems() {
-var s = localStorage.getItem('f1visa_items');
-if (s) {
-items = JSON.parse(s);
-renderAll();
-return;
-}
-// Try fetch (async, modern)
 fetch('visa-config.json')
 .then(function(r) { return r.json(); })
 .then(function(data) {
 if (data.items && Array.isArray(data.items)) {
 items = data.items;
-saveItems();
 renderAll();
 } else {
 items = [];
@@ -610,7 +372,6 @@ renderAll();
 }
 })
 .catch(function() {
-// Try XHR sync fallback (for some local server setups)
 var xhr = new XMLHttpRequest();
 xhr.open('GET', 'visa-config.json', false);
 xhr.send(null);
@@ -619,7 +380,6 @@ try {
 var data = JSON.parse(xhr.responseText);
 if (data.items && Array.isArray(data.items)) {
 items = data.items;
-saveItems();
 renderAll();
 return;
 }
@@ -631,22 +391,15 @@ renderAll();
 }
 
 function loadCases() {
-var s = localStorage.getItem('f1visa_cases');
-if (s) {
-cases = JSON.parse(s);
-return;
-}
-// Try fetch
 fetch('visa-config.json')
 .then(function(r) { return r.json(); })
 .then(function(data) {
 if (data.cases && Array.isArray(data.cases)) {
 cases = data.cases;
-saveCases();
+renderCases();
 }
 })
 .catch(function() {
-// Try XHR sync fallback
 var xhr = new XMLHttpRequest();
 xhr.open('GET', 'visa-config.json', false);
 xhr.send(null);
@@ -655,18 +408,14 @@ try {
 var data = JSON.parse(xhr.responseText);
 if (data.cases && Array.isArray(data.cases)) {
 cases = data.cases;
-saveCases();
+renderCases();
 return;
 }
 } catch(e) {}
 }
 cases = [];
+renderCases();
 });
-}
-
-// ===== UID =====
-function uid() {
-return 'i' + Math.random().toString(36).substr(2, 9);
 }
 
 // ===== RENDER =====
@@ -681,7 +430,7 @@ var col = document.getElementById('required-col');
 var required = items.filter(function(it) { return it.category === 'required'; });
 
 if (required.length === 0) {
-col.innerHTML = '<p class="text-center text-gray-400 text-sm py-12" id="required-empty">拖动条目到此处切换分类</p>';
+col.innerHTML = '<p class="text-center text-gray-300 text-sm py-12">暂无必备清单</p>';
 return;
 }
 col.innerHTML = '';
@@ -695,7 +444,7 @@ var col = document.getElementById('supporting-col');
 var supporting = items.filter(function(it) { return it.category === 'supporting'; });
 
 if (supporting.length === 0) {
-col.innerHTML = '<p class="text-center text-gray-400 text-sm py-12" id="supporting-empty">拖动条目到此处切换分类</p>';
+col.innerHTML = '<p class="text-center text-gray-300 text-sm py-12">暂无辅助材料</p>';
 return;
 }
 col.innerHTML = '';
@@ -711,218 +460,25 @@ var originalBg   = it.isOriginal ? 'bg-green-100 text-green-700' : 'bg-gray-100 
 var originalText  = it.isOriginal ? '原件' : '复印件';
 
 var div = document.createElement('div');
-div.className = 'item-card sortable-item bg-white rounded-xl p-4 shadow-sm';
-div.id = 'item-' + it.id;
-div.setAttribute('data-id', it.id);
-
+div.className = 'item-card bg-white rounded-xl p-4 shadow-sm';
 div.innerHTML =
 '<div class="flex items-start gap-2 border-l-4 ' + catBorder + ' ' + catBg + ' rounded-r-xl px-4 py-3">' +
 '<div class="flex flex-col items-center gap-2 pt-1 shrink-0">' +
-'<div class="drag-handle text-gray-300 hover:text-gray-500 cursor-grab" title="拖动排序" draggable="true">:::</div>' +
-'<input type="checkbox" ' + (it.isReady ? 'checked' : '') + ' onchange="toggleReady(\'' + it.id + '\')" class="w-5 h-5 rounded border-2 border-gray-300 accent-blue-600 cursor-pointer">' +
+'<input type="checkbox" ' + (it.isReady ? 'checked' : '') + ' disabled class="w-5 h-5 rounded border-2 border-gray-300 accent-blue-600 cursor-not-allowed">' +
 '</div>' +
 '<div class="flex-1 min-w-0 space-y-1">' +
 '<div class="item-meta-row">' +
-'<input type="text" value="' + escHtml(it.name) + '" onchange="updateItem(\'' + it.id + '\',\'name\',this.value)" class="item-name-input font-bold text-gray-900 bg-transparent border-0 text-base px-1 py-0.5 w-auto min-w-[120px] max-w-[300px] hover:bg-white focus:bg-white rounded">' +
-'<select onchange="updateItem(\'' + it.id + '\',\'isOriginal\',this.value===\'true\')" class="shrink-0 text-xs px-1.5 py-0.5 rounded font-bold border-0 cursor-pointer ' + originalBg + '">' +
-'<option value="true" ' + (it.isOriginal ? 'selected' : '') + '>原件</option>' +
-'<option value="false" ' + (!it.isOriginal ? 'selected' : '') + '>复印件</option>' +
-'</select>' +
-'<input type="number" value="' + it.quantity + '" min="1" max="99" onchange="updateItem(\'' + it.id + '\',\'quantity\',parseInt(this.value)||1)" class="shrink-0 text-xs w-12 px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 border-0 text-center hover:bg-white focus:bg-white">' +
+'<span class="item-name-input font-bold text-gray-900 text-base px-1 py-0.5 w-auto min-w-[120px]">' + escHtml(it.name) + '</span>' +
+'<span class="shrink-0 text-xs px-1.5 py-0.5 rounded font-bold border-0 ' + originalBg + '">' + originalText + '</span>' +
+'<span class="shrink-0 text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 border-0 text-center">x' + it.quantity + '</span>' +
 '</div>' +
-'<div class="flex items-center gap-2">' +
-'<span class="text-xs text-gray-400 shrink-0">文件路径</span>' +
-'<div class="flex-1 flex items-center gap-1.5 min-w-0">' +
-'<input type="text" value="' + escHtml(it.filePath) + '" onchange="updateItem(\'' + it.id + '\',\'filePath\',this.value)" placeholder="docs/..." class="flex-1 text-xs text-blue-600 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded hover:bg-white focus:bg-white focus:border-blue-400 w-full min-w-0" spellcheck="false">' +
-'<button onclick="pickFilePath(\'' + it.id + '\')" class="shrink-0 text-xs text-blue-600 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded hover:bg-blue-100 transition-colors" title="选择本地文件或文件夹">选择文件</button>' +
-'</div>' +
-'</div>' +
-'<div class="flex items-center gap-2">' +
-'<span class="text-xs text-gray-400 shrink-0">要求来源网站</span>' +
-'<input type="text" value="' + escHtml(it.acquisition) + '" onchange="updateItem(\'' + it.id + '\',\'acquisition\',this.value)" placeholder="获取方式/来源" class="flex-1 text-xs text-gray-500 bg-transparent border-0 px-1 py-0.5 hover:bg-white focus:bg-white rounded w-full">' +
-'</div>' +
+(it.filePath ? '<div class="flex items-center gap-2"><span class="text-xs text-gray-400 shrink-0">文件</span><span class="flex-1 text-xs text-blue-600 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded w-full min-w-0" spellcheck="false">' + escHtml(it.filePath) + '</span></div>' : '') +
+(it.acquisition ? '<div class="flex items-center gap-2"><span class="text-xs text-gray-400 shrink-0">来源</span><span class="flex-1 text-xs text-gray-500 bg-transparent px-1 py-0.5 w-full">' + escHtml(it.acquisition) + '</span></div>' : '') +
 (it.description ? '<p class="text-xs text-gray-600 leading-relaxed px-1">' + escHtml(it.description) + '</p>' : '') +
 '</div>' +
-'<button onclick="deleteItem(\'' + it.id + '\')" class="shrink-0 text-gray-300 hover:text-red-500 transition-colors p-1 mt-1" title="删除">' +
-'<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' +
-'</button>' +
 '</div>';
 
-// Drag events (on the handle, not the whole card)
-var handle = div.querySelector('.drag-handle');
-handle.addEventListener('dragstart', function(e) {
-draggedItemId = it.id;
-div.classList.add('dragging');
-e.dataTransfer.effectAllowed = 'move';
-});
-handle.addEventListener('dragend', function() {
-div.classList.remove('dragging');
-draggedItemId = null;
-document.querySelectorAll('.drag-over').forEach(function(el) { el.classList.remove('drag-over'); });
-});
-
 return div;
-}
-
-function openFileLocation(id) {
-var it = items.find(function(item) { return item.id === id; });
-if (!it || !it.filePath) return;
-var fullPath = it.filePath.replace(/\\/g, '/');
-var dir = fullPath.substring(0, fullPath.lastIndexOf('/') + 1);
-var folderUrl = 'file:///' + (dir.startsWith('docs/') || dir.startsWith('docs\\') ? 'D:/VibeCoding/F1/' + dir : dir);
-window.location.href = folderUrl;
-}
-
-function updateItem(id, field, value) {
-items.forEach(function(it) {
-if (it.id === id) {
-it[field] = value;
-}
-});
-saveItems();
-renderAll();
-}
-
-function toggleReady(id) {
-items.forEach(function(it) {
-if (it.id === id) {
-it.isReady = !it.isReady;
-}
-});
-saveItems();
-renderAll();
-}
-
-function toggleOriginal(id) {
-items.forEach(function(it) {
-if (it.id === id) {
-it.isOriginal = !it.isOriginal;
-}
-});
-saveItems();
-renderAll();
-}
-
-function deleteItem(id) {
-if (!confirm('确定删除此条目？')) return;
-items = items.filter(function(it) { return it.id !== id; });
-saveItems();
-renderAll();
-}
-
-function addItem(category) {
-var name = prompt('Item name:');
-if (!name || !name.trim()) return;
-items.push({
-id: uid(),
-name: name.trim(),
-category: category,
-isOriginal: false,
-quantity: 1,
-filePath: '',
-isReady: false
-});
-saveItems();
-renderAll();
-}
-
-// ===== DRAG & DROP =====
-var _dragOverCardId = null;
-var _insertBefore = false;
-
-function onDragOver(e) {
-e.preventDefault();
-e.dataTransfer.dropEffect = 'move';
-// Remove old insert indicators
-document.querySelectorAll('.drag-insert-indicator').forEach(function(el) { el.remove(); });
-document.querySelectorAll('.drag-over-card').forEach(function(el) { el.classList.remove('drag-over-card'); });
-
-// Find which card we're over (not the dragged one)
-var target = e.target.closest('.sortable-item');
-if (!target || target.id === 'item-' + draggedItemId) {
-_dragOverCardId = null;
-return;
-}
-_dragOverCardId = target.getAttribute('data-id');
-// Insert before if mouse is in top half of card
-var rect = target.getBoundingClientRect();
-_insertBefore = e.clientY < rect.top + rect.height / 2;
-target.classList.add('drag-over-card');
-
-// Show insert indicator
-var indicator = document.createElement('div');
-indicator.className = 'drag-insert-indicator';
-indicator.style.cssText = 'height:3px;background:#6366f1;border-radius:2px;margin:4px 0;transition:all 0.1s;';
-if (_insertBefore) {
-target.parentNode.insertBefore(indicator, target);
-} else {
-target.parentNode.insertBefore(indicator, target.nextSibling);
-}
-}
-
-function onDragLeave(e) {
-if (!e.currentTarget.contains(e.relatedTarget)) {
-e.currentTarget.classList.remove('drag-over');
-document.querySelectorAll('.drag-insert-indicator').forEach(function(el) { el.remove(); });
-document.querySelectorAll('.drag-over-card').forEach(function(el) { el.classList.remove('drag-over-card'); });
-_dragOverCardId = null;
-}
-}
-
-function onDrop(e, targetCategory) {
-e.preventDefault();
-e.currentTarget.classList.remove('drag-over');
-document.querySelectorAll('.drag-insert-indicator').forEach(function(el) { el.remove(); });
-document.querySelectorAll('.drag-over-card').forEach(function(el) { el.classList.remove('drag-over-card'); });
-if (!draggedItemId) return;
-
-var draggedItem = items.find(function(it) { return it.id === draggedItemId; });
-if (!draggedItem) return;
-
-var srcCategory = draggedItem.category;
-
-// Remove from array
-items = items.filter(function(it) { return it.id !== draggedItemId; });
-
-if (srcCategory === targetCategory) {
-// Same column: reorder at correct position
-var colItems = items.filter(function(it) { return it.category === targetCategory; });
-var otherItems = items.filter(function(it) { return it.category !== targetCategory; });
-
-if (_dragOverCardId) {
-var insertIdx = colItems.findIndex(function(it) { return it.id === _dragOverCardId; });
-if (insertIdx === -1) insertIdx = colItems.length;
-if (_insertBefore) {
-colItems.splice(insertIdx, 0, draggedItem);
-} else {
-colItems.splice(insertIdx + 1, 0, draggedItem);
-}
-} else {
-colItems.push(draggedItem);
-}
-items = otherItems.concat(colItems);
-} else {
-// Different column: change category
-draggedItem.category = targetCategory;
-var colItems = items.filter(function(it) { return it.category === targetCategory; });
-var otherItems = items.filter(function(it) { return it.category !== targetCategory; });
-
-if (_dragOverCardId) {
-var insertIdx = colItems.findIndex(function(it) { return it.id === _dragOverCardId; });
-if (insertIdx === -1) insertIdx = colItems.length;
-if (_insertBefore) {
-colItems.splice(insertIdx, 0, draggedItem);
-} else {
-colItems.splice(insertIdx + 1, 0, draggedItem);
-}
-} else {
-colItems.push(draggedItem);
-}
-items = otherItems.concat(colItems);
-}
-_dragOverCardId = null;
-saveItems();
-renderAll();
 }
 
 // ===== TABS =====
@@ -985,8 +541,6 @@ container.appendChild(section);
 });
 }
 
-window.toggleQaStates = {};
-
 function toggleQA(idx) {
 var content = document.getElementById('qa-content-' + idx);
 var arrow = document.getElementById('qa-arrow-' + idx);
@@ -1027,7 +581,6 @@ rejected.forEach(function(c, i) { rejectedList.appendChild(createCaseCard(c, i))
 function createCaseCard(c, idx) {
 var isApproved = c.result === 'approved';
 var cardBorder = isApproved ? 'border-l-4 border-l-green-500' : 'border-l-4 border-l-red-500';
-var badgeClass = isApproved ? 'bg-green-100 text-green-800 border-green-300' : 'bg-red-100 text-red-700 border-red-300';
 var badgeText = isApproved ? '通过' : '拒签';
 var div = document.createElement('div');
 div.className = 'bg-white rounded-2xl shadow-sm p-5 case-enter border border-gray-200 ' + cardBorder;
@@ -1037,7 +590,6 @@ div.innerHTML =
 '<span class="text-xs text-gray-500 font-medium">' + c.date + '</span>' +
 '<span class="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full font-bold border border-green-300">' + badgeText + '</span>' +
 '</div>' +
-'<button onclick="deleteCase(' + idx + ')" class="text-gray-300 hover:text-red-500"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>' +
 '</div>' +
 '<div class="grid grid-cols-3 gap-2 mb-3 text-sm">' +
 (c.window ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">领事馆</span><p class="font-semibold text-gray-800">' + c.window + '</p></div>' : '') +
@@ -1074,240 +626,10 @@ rejected.style.display = 'block';
 }
 }
 
-function openAddCase() {
-document.getElementById('case-date').valueAsDate = new Date();
-document.getElementById('addCaseModal').classList.remove('hidden');
-}
-
-function closeAddCase() {
-document.getElementById('addCaseModal').classList.add('hidden');
-}
-
-function confirmAddCase() {
-var status = document.getElementById('case-status').value;
-var date = document.getElementById('case-date').value;
-var window = document.getElementById('case-window').value.trim();
-var vo = document.getElementById('case-vo').value.trim();
-var duration = document.getElementById('case-duration').value.trim();
-var prep = document.getElementById('case-prep').value.trim();
-var used = document.getElementById('case-used').value.trim();
-var unused = document.getElementById('case-unused').value.trim();
-var timeline = document.getElementById('case-timeline').value.trim();
-var process = document.getElementById('case-process').value.trim();
-var result = document.getElementById('case-result').value.trim();
-var tips = document.getElementById('case-tips').value.trim();
-
-if (!date) { alert('请选择日期'); return; }
-
-cases.push({status, date, window, vo, duration, prep, used, unused, timeline, process, result, tips});
-saveCases();
-renderCases();
-closeAddCase();
-closeAddCase(); // double close to ensure
-
-// Clear fields
-['case-window','case-vo','case-duration','case-prep','case-used','case-unused','case-timeline','case-process','case-result','case-tips'].forEach(function(id) {
-document.getElementById(id).value = '';
-});
-}
-
-function deleteCase(idx) {
-if (!confirm('确定删除此案例？')) return;
-cases.splice(idx, 1);
-saveCases();
-renderCases();
-}
-
-// ===== SETTINGS =====
-function showSettings() {
-document.getElementById('settingsModal').classList.remove('hidden');
-}
-function closeSettings() {
-document.getElementById('settingsModal').classList.add('hidden');
-}
-
-function loadConfigFile() {
-var input = document.createElement('input');
-input.type = 'file';
-input.accept = '.json';
-input.onchange = function(e) {
-var file = e.target.files[0];
-if (!file) return;
-var reader = new FileReader();
-reader.onload = function(ev) {
-try {
-var data = JSON.parse(ev.target.result);
-if (data.items && Array.isArray(data.items)) {
-if (confirm('将加载 ' + data.items.length + ' 条清单，导入到 localStorage？')) {
-items = data.items;
-saveItems();
-renderAll();
-alert('加载成功！');
-}
-} else {
-alert('无效的配置文件');
-}
-} catch(err) {
-alert('读取文件出错：' + err.message);
-}
-};
-reader.readAsText(file);
-};
-input.click();
-}
-
-function exportConfig() {
-var data = {version: 1, items: items, exportedAt: new Date().toISOString()};
-var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-var a = document.createElement('a');
-a.href = URL.createObjectURL(blob);
-a.download = 'visa-config.json';
-a.click();
-}
-
-function importConfig(input) {
-var file = input.files[0];
-if (!file) return;
-var reader = new FileReader();
-reader.onload = function(e) {
-try {
-var data = JSON.parse(e.target.result);
-if (data.items && Array.isArray(data.items)) {
-if (confirm('导入 ' + data.items.length + ' 条清单？将覆盖现有数据。')) {
-items = data.items;
-saveItems();
-renderAll();
-alert('导入成功！');
-}
-} else {
-alert('无效的配置文件');
-}
-} catch(err) {
-alert('读取文件出错：' + err.message);
-}
-};
-reader.readAsText(file);
-}
-
-function exportCases() {
-var data = {cases: cases, exportedAt: new Date().toISOString()};
-var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-var a = document.createElement('a');
-a.href = URL.createObjectURL(blob);
-a.download = 'visa-cases.json';
-a.click();
-}
-
-function importCases(input) {
-var file = input.files[0];
-if (!file) return;
-var reader = new FileReader();
-reader.onload = function(e) {
-try {
-var data = JSON.parse(e.target.result);
-if (data.cases && Array.isArray(data.cases)) {
-if (confirm('导入 ' + data.cases.length + ' 个案例？将覆盖现有案例。')) {
-cases = data.cases;
-saveCases();
-renderCases();
-alert('导入成功！');
-}
-} else {
-alert('无效的案例文件');
-}
-} catch(err) {
-alert('Error reading file: ' + err.message);
-}
-};
-reader.readAsText(file);
-}
-
-// ===== ADD ITEM MODAL =====
-function toggleNewOriginal() {
-newOriginal = !newOriginal;
-var toggle = document.getElementById('new-item-original');
-toggle.className = 'toggle ' + (newOriginal ? 'bg-red-500' : 'bg-gray-200');
-toggle.querySelector('.toggle-dot').style.left = newOriginal ? '22px' : '2px';
-}
-
-function closeAddItem() {
-document.getElementById('addItemModal').classList.add('hidden');
-newOriginal = false;
-var t = document.getElementById('new-item-original');
-t.className = 'toggle bg-gray-200';
-t.querySelector('.toggle-dot').style.left = '2px';
-document.getElementById('new-item-name').value = '';
-document.getElementById('new-item-category').value = 'required';
-document.getElementById('new-item-qty').value = '1';
-document.getElementById('new-item-acquisition').value = '';
-document.getElementById('new-item-description').value = '';
-}
-
-function confirmAddItem() {
-var name = document.getElementById('new-item-name').value.trim();
-var category = document.getElementById('new-item-category').value;
-var qty = parseInt(document.getElementById('new-item-qty').value) || 1;
-var acquisition = document.getElementById('new-item-acquisition').value.trim();
-var description = document.getElementById('new-item-description').value.trim();
-if (!name) { alert('请输入物品名称'); return; }
-items.push({
-id: uid(),
-name: name,
-category: category,
-isOriginal: newOriginal,
-quantity: qty,
-filePath: '',
-acquisition: acquisition,
-description: description,
-isReady: false
-});
-saveItems();
-renderAll();
-closeAddItem();
-}
-
-// ===== FILE PICKER =====
-var _pickerItemId = null;
-document.getElementById('filePicker').addEventListener('change', function(e) {
-  var file = e.target.files[0];
-  if (file && _pickerItemId) {
-    var name = file.name;
-    // webkitRelativePath gives path relative to the selected folder, e.g. "images/photo.jpg"
-    var rel = file.webkitRelativePath || '';
-    var guess;
-    if (rel && rel !== name) {
-      // User picked a folder first; use the relative path as-is
-      guess = rel;
-    } else {
-      // Single file picked directly
-      guess = 'docs/';
-      if (name.match(/\.(pdf|doc|docx)$/i)) guess += 'documents/' + name;
-      else if (name.match(/\.(jpg|jpeg|png)$/i)) guess += 'images/' + name;
-      else guess += name;
-    }
-    updateItem(_pickerItemId, 'filePath', guess);
-  }
-  _pickerItemId = null;
-  e.target.value = '';
-});
-
-function pickFilePath(itemId) {
-  _pickerItemId = itemId;
-  document.getElementById('filePicker').click();
-}
-
-function showFilePickerHint() {
-  alert('请在清单条目内点击"选择文件"按钮来设置该条目的文件路径。');
-}
-
 // ===== UTILS =====
 function escHtml(s) {
 if (!s) return '';
 return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function toggleLegend(el) {
-// No-op, just visual feedback
 }
 
 // ===== START =====

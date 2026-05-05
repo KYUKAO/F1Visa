@@ -20,6 +20,7 @@ desktop.ini
 *.log
 npm-debug.log*
 
-# Temp
-*.tmp
-*.temp
+# Build output
+node_modules/
+dist/
+src/
