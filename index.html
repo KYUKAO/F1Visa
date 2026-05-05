@@ -489,10 +489,10 @@ document.getElementById('page-cases').className = tab === 'cases' ? 'block' : 'h
 document.getElementById('page-qa').className = tab === 'qa' ? 'block' : 'hidden';
 document.getElementById('page-templates').className = tab === 'templates' ? 'block' : 'hidden';
 
-document.getElementById('btn-checklist').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-medium ' + (tab === 'checklist' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200');
-document.getElementById('btn-cases').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-medium ' + (tab === 'cases' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200');
-document.getElementById('btn-qa').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-medium ' + (tab === 'qa' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200');
-document.getElementById('btn-templates').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-medium ' + (tab === 'templates' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200');
+document.getElementById('btn-checklist').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-semibold ' + (tab === 'checklist' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm');
+document.getElementById('btn-cases').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-semibold ' + (tab === 'cases' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm');
+document.getElementById('btn-qa').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-semibold ' + (tab === 'qa' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm');
+document.getElementById('btn-templates').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-semibold ' + (tab === 'templates' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm');
 }
 
 // ===== Q&A =====
@@ -580,31 +580,32 @@ rejected.forEach(function(c, i) { rejectedList.appendChild(createCaseCard(c, i))
 }
 
 function createCaseCard(c, idx) {
-var isApproved = c.result === 'approved';
-var cardBorder = isApproved ? 'border-l-4 border-l-green-500' : 'border-l-4 border-l-red-500';
-var badgeText = isApproved ? '通过' : '拒签';
-var div = document.createElement('div');
-div.className = 'bg-white rounded-2xl shadow-sm p-5 case-enter border border-gray-200 ' + cardBorder;
-div.innerHTML =
-'<div class="flex items-start justify-between mb-3">' +
-'<div>' +
-'<span class="text-xs text-gray-500 font-medium">' + c.date + '</span>' +
-'<span class="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full font-bold border border-green-300">' + badgeText + '</span>' +
-'</div>' +
-'</div>' +
-'<div class="grid grid-cols-3 gap-2 mb-3 text-sm">' +
-(c.window ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">领事馆</span><p class="font-semibold text-gray-800">' + c.window + '</p></div>' : '') +
-(c.vo ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">VO</span><p class="font-semibold text-gray-800">' + c.vo + '</p></div>' : '') +
-(c.duration ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">时长</span><p class="font-semibold text-gray-800">' + c.duration + '</p></div>' : '') +
-'</div>' +
-(c.prep ? '<div class="mb-2"><span class="text-sm font-bold text-rose-600">准备:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + c.prep + '</p></div>' : '') +
-(c.used ? '<div class="mb-2"><span class="text-sm font-bold text-green-600">用到:</span><p class="text-sm text-gray-700 mt-0.5 font-medium leading-relaxed">' + c.used + '</p></div>' : '') +
-(c.unused ? '<div class="mb-2"><span class="text-sm font-bold text-gray-400">没用:</span><p class="text-sm text-gray-500 mt-0.5 leading-relaxed">' + c.unused + '</p></div>' : '') +
-(c.timeline ? '<div class="mb-2"><span class="text-sm font-bold text-purple-600">时间线:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + c.timeline + '</p></div>' : '') +
-(c.process ? '<div class="mb-2"><span class="text-sm font-bold text-orange-600">过程:</span><p class="text-sm text-gray-700 mt-0.5 whitespace-pre-wrap leading-relaxed">' + c.process + '</p></div>' : '') +
-(c.result ? '<div class="mb-2"><span class="text-sm font-bold text-indigo-600">结果:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + c.result + '</p></div>' : '') +
-(c.tips ? '<div class="bg-amber-50 rounded-lg p-3 mt-2 border border-amber-200"><span class="text-sm font-bold text-amber-700">贴士:</span><p class="text-sm text-amber-800 mt-0.5 leading-relaxed">' + c.tips + '</p></div>' : '');
-return div;
+    var isApproved = c.status === 'approved';
+    var cardBorder = isApproved ? 'border-l-4 border-l-green-500' : 'border-l-4 border-l-red-500';
+    var badgeText = isApproved ? '通过' : '拒签';
+    var statusBg = isApproved ? 'bg-green-100 text-green-800 border-green-300' : 'bg-red-100 text-red-800 border-red-300';
+    var div = document.createElement('div');
+    div.className = 'bg-white rounded-2xl shadow-sm p-5 case-enter border border-gray-200 ' + cardBorder;
+    div.innerHTML =
+    '<div class="flex items-start justify-between mb-3">' +
+    '<div class="flex items-center gap-2">' +
+    '<span class="text-xs text-gray-500 font-medium">' + escHtml(c.date) + '</span>' +
+    '<span class="text-xs px-2 py-0.5 rounded-full font-bold border ' + statusBg + '">' + badgeText + '</span>' +
+    '</div>' +
+    '</div>' +
+    '<div class="grid grid-cols-3 gap-2 mb-3 text-sm">' +
+    (c.window ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">领事馆</span><p class="font-semibold text-gray-800">' + escHtml(c.window) + '</p></div>' : '') +
+    (c.vo ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">VO</span><p class="font-semibold text-gray-800">' + escHtml(c.vo) + '</p></div>' : '') +
+    (c.duration ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">时长</span><p class="font-semibold text-gray-800">' + escHtml(c.duration) + '</p></div>' : '') +
+    '</div>' +
+    (c.prep ? '<div class="mb-2"><span class="text-sm font-bold text-rose-600">准备:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + escHtml(c.prep) + '</p></div>' : '') +
+    (c.used ? '<div class="mb-2"><span class="text-sm font-bold text-green-600">用到:</span><p class="text-sm text-gray-700 mt-0.5 font-medium leading-relaxed">' + escHtml(c.used) + '</p></div>' : '') +
+    (c.unused ? '<div class="mb-2"><span class="text-sm font-bold text-gray-400">没用:</span><p class="text-sm text-gray-500 mt-0.5 leading-relaxed">' + escHtml(c.unused) + '</p></div>' : '') +
+    (c.timeline ? '<div class="mb-2"><span class="text-sm font-bold text-purple-600">时间线:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + escHtml(c.timeline) + '</p></div>' : '') +
+    (c.process ? '<div class="mb-2"><span class="text-sm font-bold text-orange-600">过程:</span><p class="text-sm text-gray-700 mt-0.5 whitespace-pre-wrap leading-relaxed">' + escHtml(c.process) + '</p></div>' : '') +
+    (c.notes ? '<div class="mb-2"><span class="text-sm font-bold text-indigo-600">备注:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + escHtml(c.notes) + '</p></div>' : '') +
+    (c.tips ? '<div class="bg-amber-50 rounded-lg p-3 mt-2 border border-amber-200"><span class="text-sm font-bold text-amber-700">贴士:</span><p class="text-sm text-amber-800 mt-0.5 leading-relaxed">' + escHtml(c.tips) + '</p></div>' : '');
+    return div;
 }
 
 function filterCases(f) {
