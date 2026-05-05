@@ -393,6 +393,11 @@ I have received a five-year [funding type] from [source]
 - **配置数据必须读取外部配置文件（visa-config.json），禁止嵌入 HTML。** 通过 `fetch()` 或 `XMLHttpRequest` 动态加载，不得将 `items`、`cases` 等数据硬编码在 `<script>` 标签内。
 - 清单网页: `index.html`
 - 配置文件: `visa-config.json`
+- **数据字段名必须与 JSON schema 一致。** `visa-config.json` 中案例用 `status` 字段（值为 `approved`/`rejected`），代码中判断状态必须用 `c.status`，不能用 `c.result`。`createCaseCard` 函数中所有用户输入字段必须通过 `escHtml()` 转义防止 XSS。
+
+## 已知 Bug 修复记录
+- **案例页面不显示**：症状为点击「案例」tab 后页面空白或显示"暂无通过/拒签案例"。根因是 `createCaseCard()` 中用 `c.result === 'approved'` 判断状态，但 JSON 中字段名为 `status`，导致判断永远失败。修复：改为 `c.status === 'approved'`。`index.html` 和 `editor.html` 均受影响。
+- **GitHub Pages styles.css 404**：症状为页面样式丢失。根因是 `dist/` 目录在 `.gitignore` 中未提交。修复：从 `.gitignore` 移除 `dist/`，将 `dist/styles.css` 纳入仓库。
 
 ## Shell 规范（PowerShell）
 - PowerShell 不支持 Bash 的 `&&` 链接命令。
