@@ -379,3 +379,8 @@ I have received a five-year [funding type] from [source]
 ## UI 规范
 - **问答页 (Q&A) 必须保留为英文**，不可翻译成其他语言
 - 配色方案：纯白底 + 天蓝色导航 + 玫瑰红必备 / 青绿辅助，双语对比度要高
+
+## 代码规范
+- **配置数据必须读取外部配置文件（visa-config.json），禁止嵌入 HTML。** 通过 `fetch()` 或 `XMLHttpRequest` 动态加载，不得将 `items`、`cases` 等数据硬编码在 `<script>` 标签内。
+- 清单网页: `index.html`
+- 配置文件: `visa-config.json`

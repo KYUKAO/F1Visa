@@ -8,7 +8,10 @@
 <style>
 .drag-over { background: #dbeafe !important; border: 2px dashed #2563eb !important; }
 .dragging { opacity: 0.4; }
-.sortable-item { cursor: grab; user-select: none; }
+.sortable-item { cursor: default; }
+.drag-over-card { outline: 2px dashed #6366f1; outline-offset: -2px; }
+.drag-handle { cursor: grab; user-select: none; }
+.drag-handle:active { cursor: grabbing; }
 .sortable-item:active { cursor: grabbing; }
 .item-card { transition: all 0.2s; border-left: 4px solid transparent; }
 .item-card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
@@ -591,68 +594,74 @@ var s = localStorage.getItem('f1visa_items');
 if (s) {
 items = JSON.parse(s);
 renderAll();
-} else {
+return;
+}
+// Try fetch (async, modern)
 fetch('visa-config.json')
-.then(function(res) { return res.json(); })
+.then(function(r) { return r.json(); })
 .then(function(data) {
 if (data.items && Array.isArray(data.items)) {
 items = data.items;
-} else {
-initDefaultItems();
-}
 saveItems();
 renderAll();
+} else {
+items = [];
+renderAll();
+}
 })
 .catch(function() {
-initDefaultItems();
+// Try XHR sync fallback (for some local server setups)
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'visa-config.json', false);
+xhr.send(null);
+if (xhr.status === 200) {
+try {
+var data = JSON.parse(xhr.responseText);
+if (data.items && Array.isArray(data.items)) {
+items = data.items;
 saveItems();
 renderAll();
+return;
+}
+} catch(e) {}
+}
+items = [];
+renderAll();
 });
-}
-}
-
-function initDefaultItems() {
-// Default items
-items = [
-{id: uid(), name: 'Passport (护照)', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: true, description: '有效期需超过6个月。若计划9月入学，建议有效期至次年3月以后。新版电子护照封面有红色国徽图案，旧版蓝本封面。'},
-{id: uid(), name: 'Previous Passport (旧护照)', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '如有旧护照请一并携带，尤其是有之前F1或其他类型签证记录的。签证官可能会翻看。'},
-{id: uid(), name: 'National ID Card (居民身份证)', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: true, description: '中华人民共和国居民身份证原件，正反面都要。'},
-{id: uid(), name: 'Photo (照片)', category: 'required', isOriginal: true, quantity: 2, filePath: '', acquisition: '', isReady: false, description: '6个月内近照，白底，50mm×50mm，头部占画面70-80%，不许露齿、不许戴眼镜、不许美瞳。美国签证照片要求严格，建议到专业照相馆说明是"美国签证照片"。即使电子照片没问题，现场仍建议备2张纸质版。'},
-{id: uid(), name: 'Cash (现金)', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '面签一般不收费，但存包、打印、途中应急都需要现金。建议备50-100元零钱。地铁站寄存柜约30元，路边寄存点统一30元。'},
-{id: uid(), name: 'Form DS-160 Confirmation Page (DS-160 确认页)', category: 'required', isOriginal: false, quantity: 1, filePath: '', acquisition: 'https://ceac.state.gov/GenNIV/Default.aspx', isReady: false, description: 'DS-160表格确认页（带照片的那页），需彩色打印。整页为A4大小，不要缩印。确认页有条形码，面签时签证官会扫描。建议多打2份备用。'},
-{id: uid(), name: 'Visa Appointment Confirmation (签证预约确认页)', category: 'required', isOriginal: false, quantity: 1, filePath: '', acquisition: 'https://cgifederal.secure.force.com/', isReady: false, description: '美签预约确认页（A4打印），上面有预约编号、面签日期和时间。凭此页才能进入领事馆。建议打印2份。'},
-{id: uid(), name: 'Form I-20 — Certificate of Eligibility for Nonimmigrant Student Status (F-1)', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: true, description: '学校发的I-20表格，必须原件。需提前在第一页左下方签名（未成年需监护人签名），签名处为蓝色圆珠笔，不能有出边框。姓名需与护照一致。SEVIS ID在右上角N开头数字。'},
-{id: uid(), name: 'SEVIS I-901 Fee Receipt (SEVIS I-901 缴费收据)', category: 'required', isOriginal: false, quantity: 1, filePath: '', acquisition: 'https://fmjfee.com/', isReady: false, description: 'SEVIS费缴纳收据，350美元。在SEVIS系统缴纳后打印，必须在面签前至少3天缴纳。建议同时备好截图。'},
-{id: uid(), name: 'Admission/Offer Letter (录取通知书)', category: 'supporting', isOriginal: false, quantity: 1, filePath: 'docs/admission-letters/Goldsmiths_Admission.pdf', acquisition: '', isReady: false, description: '学校录取通知书，建议彩色打印。可同时打印offer邮件截图作为佐证。'},
-{id: uid(), name: 'Proof of Financial Ability (资助证明)', category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '资助证明信，说明谁资助你的学费和生活费。若为自费，需银行出具存款证明。若为奖学金覆盖，需学校出具Funding Letter注明金额和期限。'},
-{id: uid(), name: 'Scholarship Award Letter (奖学金证明)', category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '如获得奖学金，需提供奖学金证明文件，注明奖学金类型（TA/RA/Fellowship）、金额、覆盖期限。'},
-{id: uid(), name: 'Proof of Financial Resources / Bank Statement (资产证明 / 银行存款证明)', category: 'supporting', isOriginal: true, quantity: 1, filePath: 'docs/bank-statement/CertificateOfDeposit.pdf', acquisition: '银行网点办理存款证明', isReady: false, description: '银行出具的存款证明（中英文），需显示存款金额足够覆盖第一年学费+生活费。建议金额不低于I-20上注明的年费用总额。开具日期需在面签前1个月内。'},
-{id: uid(), name: 'Curriculum Vitae / Resume (个人简历 CV)', category: 'supporting', isOriginal: false, quantity: 1, filePath: 'docs/cv/HanqingLi_Resume_2026.pdf', acquisition: '', isReady: true, description: '英文简历，控制在1-2页。包含教育背景、项目经历、实习经历、技能、获奖等。签证官可能会就简历内容提问。'},
-{id: uid(), name: 'Statement of Purpose / Study Plan (学习计划)', category: 'supporting', isOriginal: false, quantity: 1, filePath: 'docs/study-plan/StoneSpeech.pdf', acquisition: '', isReady: false, description: '学习计划，说明你来美国读这个专业的目的、为什么选这所学校、毕业后的打算（回国）。建议简洁，1-2页。签证官可能不主动要，但准备好有备无患。'},
-{id: uid(), name: "Professor's CV / Supervisor CV (导师简历)", category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '外导（导师）的个人简历或简介，可从学校官网下载。重点展示导师的研究方向和学术成就，证明这个项目的学术价值。'},
-{id: uid(), name: 'Graduation Certificate — CHESICC Verification (毕业证学信网认证)', category: 'supporting', isOriginal: true, quantity: 1, filePath: '', acquisition: '学信网: https://www.chsi.com.cn/', isReady: false, description: '本科毕业证书原件+学信网英文认证报告。学历认证可在学信网申请，一般需要3-5个工作日。现场带原件即可，认证报告可备电子版。'},
-{id: uid(), name: 'Degree Certificate — CHESICC Verification (学位证学信网认证)', category: 'supporting', isOriginal: true, quantity: 1, filePath: '', acquisition: '学信网: https://www.chsi.com.cn/', isReady: false, description: '学士学位证书原件+学信网英文认证报告。注意：本科学位证和毕业证是两份文件，都需要。若有海外学历，还需提供教育部留学服务中心的认证。'},
-{id: uid(), name: 'Academic Transcript — Official (中英文成绩单)', category: 'supporting', isOriginal: true, quantity: 1, filePath: 'docs/transcripts/SHU-AcademicTranscript.pdf', acquisition: '学校档案馆/教务处', isReady: false, description: '本科完整成绩单（中英文），需盖学校教务处或档案馆红章。绩点/GPA需换算注明。建议多打几份，面签官可能不收但申请学校时也需要。'},
-{id: uid(), name: 'GRE Score Report (GRE 成绩单)', category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: 'ETS: https://www.ets.org/', isReady: false, description: 'GRE成绩单，若项目要求的话。需从ETS官网发送电子成绩至学校（若学校要求）。现场一般不需要带纸质版，ETS账户截图备一份即可。'},
-{id: uid(), name: 'English Proficiency Score Report — TOEFL/IELTS (英语语言成绩单)', category: 'supporting', isOriginal: false, quantity: 1, filePath: 'docs/english-scores/IELTS.pdf', acquisition: 'ETS/IELTS官网', isReady: false, description: '语言成绩单（TOEFL或IELTS），需在有效期内。IELTS成绩单原件只有一份，建议提前扫描留存。TOEFL可从ETS官网下载电子版打印。'},
-{id: uid(), name: 'Published Research / Publications (已发表论文或作品集)', category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '已发表的论文或作品集（如有）。研究生申请者可能需要，演示你的学术能力。若论文被接收但未发表，可带acceptance letter。'},
-{id: uid(), name: 'Household Registration Booklet / Hukou (户口本)', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '居民户口簿原件，包含本人信息页。若父母为资助人，可能需要证明亲属关系。集体户口需到户籍所在地派出所开具证明。'},
-{id: uid(), name: 'Social Media Identifiers (社媒账号信息 — DS-160 必填)', category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: 'DS-160 表格填写后补充', isReady: false, description: 'DS-160表格中填写的社交媒体账号列表。填写完DS-160后会生成，建议打印一份备用。若有未填写的账号被查到可能引起怀疑。常见平台：WeChat, 小红书, 微博, LinkedIn等。'},
-{id: uid(), name: "Professor's Letter of Support (导师支持信)", category: 'supporting', isOriginal: false, quantity: 1, filePath: 'docs/reference-letters/LiQi_Reference.pdf', acquisition: '', isReady: false, description: '导师（外导）的推荐信，说明他们愿意接收你并提供指导。最好打印在有导师抬头的信纸上（电子签名也可）。'},
-];
-saveItems();
 }
 
 function loadCases() {
 var s = localStorage.getItem('f1visa_cases');
 if (s) {
 cases = JSON.parse(s);
-} else {
-cases = [
-{status:'approved',date:'2026-05-05',window:'15号',vo:'白人男性',duration:'约2小时',prep:'两张照片，护照，身份证，offer letter，funding letter，ds160确认，签证预约确认，i20，个人cv，导师cv，导师支持信，sevis付款证明，本硕学位证，社媒清单，study plan',used:'护照，身份证，i20，个人cv，社媒清单',unused:'照片、五十现金、一支笔、study plan',timeline:'9:06出地铁站，丰巢柜满，路边寄存30元。约9:11开始排队。室外40分钟，室内1小时+。',process:'窗口15号，白人男性签证官。流程：1.说要F1，要I-20看 2.问专业 3.问谁出钱，答研究生院 4.要CV看，问研究内容，简答一句 5.问社媒是否就DS表上那些，我准备补充表给他看 6.敲键盘1分钟，收到白单',result:'11:21出，12点Refuse，17点Approved。29号无动静，30号15:00 Issued',tips:'B2出口有寄存柜，路边寄存统一30元。可自备社媒补充表带二维码。照片似乎非必须。'}
-];
+return;
+}
+// Try fetch
+fetch('visa-config.json')
+.then(function(r) { return r.json(); })
+.then(function(data) {
+if (data.cases && Array.isArray(data.cases)) {
+cases = data.cases;
 saveCases();
 }
+})
+.catch(function() {
+// Try XHR sync fallback
+var xhr = new XMLHttpRequest();
+xhr.open('GET', 'visa-config.json', false);
+xhr.send(null);
+if (xhr.status === 200) {
+try {
+var data = JSON.parse(xhr.responseText);
+if (data.cases && Array.isArray(data.cases)) {
+cases = data.cases;
+saveCases();
+return;
+}
+} catch(e) {}
+}
+cases = [];
+});
 }
 
 // ===== UID =====
@@ -704,13 +713,12 @@ var originalText  = it.isOriginal ? '原件' : '复印件';
 var div = document.createElement('div');
 div.className = 'item-card sortable-item bg-white rounded-xl p-4 shadow-sm';
 div.id = 'item-' + it.id;
-div.draggable = true;
 div.setAttribute('data-id', it.id);
 
 div.innerHTML =
 '<div class="flex items-start gap-2 border-l-4 ' + catBorder + ' ' + catBg + ' rounded-r-xl px-4 py-3">' +
 '<div class="flex flex-col items-center gap-2 pt-1 shrink-0">' +
-'<div class="drag-handle text-gray-300 hover:text-gray-500 cursor-grab" title="拖动排序">:::</div>' +
+'<div class="drag-handle text-gray-300 hover:text-gray-500 cursor-grab" title="拖动排序" draggable="true">:::</div>' +
 '<input type="checkbox" ' + (it.isReady ? 'checked' : '') + ' onchange="toggleReady(\'' + it.id + '\')" class="w-5 h-5 rounded border-2 border-gray-300 accent-blue-600 cursor-pointer">' +
 '</div>' +
 '<div class="flex-1 min-w-0 space-y-1">' +
@@ -740,13 +748,14 @@ div.innerHTML =
 '</button>' +
 '</div>';
 
-// Drag events
-div.addEventListener('dragstart', function(e) {
+// Drag events (on the handle, not the whole card)
+var handle = div.querySelector('.drag-handle');
+handle.addEventListener('dragstart', function(e) {
 draggedItemId = it.id;
 div.classList.add('dragging');
 e.dataTransfer.effectAllowed = 'move';
 });
-div.addEventListener('dragend', function() {
+handle.addEventListener('dragend', function() {
 div.classList.remove('dragging');
 draggedItemId = null;
 document.querySelectorAll('.drag-over').forEach(function(el) { el.classList.remove('drag-over'); });
@@ -818,40 +827,100 @@ renderAll();
 }
 
 // ===== DRAG & DROP =====
+var _dragOverCardId = null;
+var _insertBefore = false;
+
 function onDragOver(e) {
 e.preventDefault();
-e.currentTarget.classList.add('drag-over');
+e.dataTransfer.dropEffect = 'move';
+// Remove old insert indicators
+document.querySelectorAll('.drag-insert-indicator').forEach(function(el) { el.remove(); });
+document.querySelectorAll('.drag-over-card').forEach(function(el) { el.classList.remove('drag-over-card'); });
+
+// Find which card we're over (not the dragged one)
+var target = e.target.closest('.sortable-item');
+if (!target || target.id === 'item-' + draggedItemId) {
+_dragOverCardId = null;
+return;
+}
+_dragOverCardId = target.getAttribute('data-id');
+// Insert before if mouse is in top half of card
+var rect = target.getBoundingClientRect();
+_insertBefore = e.clientY < rect.top + rect.height / 2;
+target.classList.add('drag-over-card');
+
+// Show insert indicator
+var indicator = document.createElement('div');
+indicator.className = 'drag-insert-indicator';
+indicator.style.cssText = 'height:3px;background:#6366f1;border-radius:2px;margin:4px 0;transition:all 0.1s;';
+if (_insertBefore) {
+target.parentNode.insertBefore(indicator, target);
+} else {
+target.parentNode.insertBefore(indicator, target.nextSibling);
+}
 }
 
 function onDragLeave(e) {
+if (!e.currentTarget.contains(e.relatedTarget)) {
 e.currentTarget.classList.remove('drag-over');
+document.querySelectorAll('.drag-insert-indicator').forEach(function(el) { el.remove(); });
+document.querySelectorAll('.drag-over-card').forEach(function(el) { el.classList.remove('drag-over-card'); });
+_dragOverCardId = null;
+}
 }
 
 function onDrop(e, targetCategory) {
 e.preventDefault();
 e.currentTarget.classList.remove('drag-over');
+document.querySelectorAll('.drag-insert-indicator').forEach(function(el) { el.remove(); });
+document.querySelectorAll('.drag-over-card').forEach(function(el) { el.classList.remove('drag-over-card'); });
 if (!draggedItemId) return;
 
-// Find item
-var item = items.find(function(it) { return it.id === draggedItemId; });
-if (!item) return;
+var draggedItem = items.find(function(it) { return it.id === draggedItemId; });
+if (!draggedItem) return;
 
-// If dropping in same column, reorder. If different column, change category.
-if (item.category === targetCategory) {
-// Reorder: move to end of target column
+var srcCategory = draggedItem.category;
+
+// Remove from array
 items = items.filter(function(it) { return it.id !== draggedItemId; });
-var targetItems = items.filter(function(it) { return it.category === targetCategory; });
+
+if (srcCategory === targetCategory) {
+// Same column: reorder at correct position
+var colItems = items.filter(function(it) { return it.category === targetCategory; });
 var otherItems = items.filter(function(it) { return it.category !== targetCategory; });
-targetItems.push(item);
-items = otherItems.concat(targetItems);
+
+if (_dragOverCardId) {
+var insertIdx = colItems.findIndex(function(it) { return it.id === _dragOverCardId; });
+if (insertIdx === -1) insertIdx = colItems.length;
+if (_insertBefore) {
+colItems.splice(insertIdx, 0, draggedItem);
 } else {
-// Change category
-items.forEach(function(it) {
-if (it.id === draggedItemId) {
-it.category = targetCategory;
+colItems.splice(insertIdx + 1, 0, draggedItem);
 }
-});
+} else {
+colItems.push(draggedItem);
 }
+items = otherItems.concat(colItems);
+} else {
+// Different column: change category
+draggedItem.category = targetCategory;
+var colItems = items.filter(function(it) { return it.category === targetCategory; });
+var otherItems = items.filter(function(it) { return it.category !== targetCategory; });
+
+if (_dragOverCardId) {
+var insertIdx = colItems.findIndex(function(it) { return it.id === _dragOverCardId; });
+if (insertIdx === -1) insertIdx = colItems.length;
+if (_insertBefore) {
+colItems.splice(insertIdx, 0, draggedItem);
+} else {
+colItems.splice(insertIdx + 1, 0, draggedItem);
+}
+} else {
+colItems.push(draggedItem);
+}
+items = otherItems.concat(colItems);
+}
+_dragOverCardId = null;
 saveItems();
 renderAll();
 }
