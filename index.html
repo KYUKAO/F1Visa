@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>F1 Visa Checklist</title>
+<title>F1 签证清单</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-.drag-over { background: #e0e7ff !important; border: 2px dashed #6366f1 !important; }
+.drag-over { background: #dbeafe !important; border: 2px dashed #2563eb !important; }
 .dragging { opacity: 0.4; }
 .sortable-item { cursor: grab; user-select: none; }
 .sortable-item:active { cursor: grabbing; }
-.item-card { transition: all 0.2s; }
-.item-card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-input[type="text"]:focus { outline: none; box-shadow: 0 0 0 2px #6366f1; border-radius: 4px; }
-input[type="number"]:focus { outline: none; box-shadow: 0 0 0 2px #6366f1; border-radius: 4px; }
-textarea:focus { outline: none; box-shadow: 0 0 0 2px #6366f1; border-radius: 4px; }
+.item-card { transition: all 0.2s; border-left: 4px solid transparent; }
+.item-card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+input[type="text"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-radius: 4px; }
+input[type="number"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-radius: 4px; }
+textarea:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-radius: 4px; }
 .badge { transition: all 0.2s; }
 .toggle { position: relative; width: 44px; height: 24px; border-radius: 12px; cursor: pointer; transition: background 0.2s; }
 .toggle-dot { position: absolute; top: 2px; width: 20px; height: 20px; border-radius: 50%; background: white; transition: left 0.2s; }
@@ -26,22 +26,22 @@ textarea:focus { outline: none; box-shadow: 0 0 0 2px #6366f1; border-radius: 4p
 @keyframes caseSlide { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+<body class="min-h-screen bg-white">
 
 <!-- Top Nav -->
-<nav class="bg-white/80 backdrop-blur border-b border-gray-200 sticky top-0 z-50">
+<nav class="bg-sky-50 border-b-2 border-sky-200 sticky top-0 z-50 shadow-sm">
 <div class="max-w-5xl mx-auto px-4">
 <div class="flex items-center justify-between h-16">
 <div class="flex items-center gap-3">
-<svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-<h1 class="text-xl font-bold text-gray-900">F1 Visa Checklist</h1>
+<svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+<h1 class="text-xl font-bold text-blue-900">F1 签证清单</h1>
 </div>
 <div class="flex items-center gap-2">
-<button onclick="showTab('checklist')" id="btn-checklist" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white">清单</button>
-<button onclick="showTab('cases')" id="btn-cases" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200">案例</button>
-<button onclick="showTab('qa')" id="btn-qa" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200">问答</button>
-<button onclick="showTab('templates')" id="btn-templates" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200">模板</button>
-<button onclick="showSettings()" class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700" title="Settings">
+<button onclick="showTab('checklist')" id="btn-checklist" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white shadow-sm">清单</button>
+<button onclick="showTab('cases')" id="btn-cases" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm">案例</button>
+<button onclick="showTab('qa')" id="btn-qa" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm">问答</button>
+<button onclick="showTab('templates')" id="btn-templates" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm">模板</button>
+<button onclick="showSettings()" class="p-2 rounded-lg text-blue-600 hover:bg-blue-100" title="设置">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
 </button>
 </div>
@@ -57,75 +57,75 @@ textarea:focus { outline: none; box-shadow: 0 0 0 2px #6366f1; border-radius: 4p
 <!-- Two Columns -->
 <div class="flex flex-col gap-6">
 
-<!-- Required Column -->
+<!-- 必备清单 -->
 <div>
 <div class="flex items-center justify-between mb-3">
 <div class="flex items-center gap-2">
-<div class="w-3 h-3 rounded-full bg-red-500"></div>
-<h2 class="text-lg font-bold text-gray-800">必备清单</h2>
+<div class="w-3 h-3 rounded-full bg-rose-500"></div>
+<h2 class="text-lg font-bold text-rose-800">必备清单</h2>
 </div>
-<button onclick="addItem('required')" class="flex items-center gap-1 text-sm bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors font-medium">
+<button onclick="addItem('required')" class="flex items-center gap-1 text-sm bg-rose-500 text-white px-3 py-1.5 rounded-lg hover:bg-rose-600 transition-colors font-semibold shadow-sm">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-Add
+添加
 </button>
 </div>
-<div id="required-col" class="space-y-3 min-h-[300px] bg-red-50/50 rounded-2xl p-4 border-2 border-dashed border-red-100 transition-all" ondragover="onDragOver(event)" ondrop="onDrop(event,'required')" ondragleave="onDragLeave(event)">
-<p class="text-center text-gray-400 text-sm py-12" id="required-empty">Drag items here or click Add</p>
+<div id="required-col" class="space-y-3 min-h-[300px] bg-white rounded-2xl p-4 border-2 border-rose-200 transition-all" ondragover="onDragOver(event)" ondrop="onDrop(event,'required')" ondragleave="onDragLeave(event)">
+<p class="text-center text-rose-300 text-sm py-12" id="required-empty">拖动条目到此处切换分类</p>
 </div>
 </div>
 
-<!-- Supporting Column -->
+<!-- 辅助材料 -->
 <div>
 <div class="flex items-center justify-between mb-3">
 <div class="flex items-center gap-2">
-<div class="w-3 h-3 rounded-full bg-blue-500"></div>
-<h2 class="text-lg font-bold text-gray-800">Supporting Docs</h2>
+<div class="w-3 h-3 rounded-full bg-teal-500"></div>
+<h2 class="text-lg font-bold text-teal-800">辅助材料</h2>
 </div>
-<button onclick="addItem('supporting')" class="flex items-center gap-1 text-sm bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-colors font-medium">
+<button onclick="addItem('supporting')" class="flex items-center gap-1 text-sm bg-teal-500 text-white px-3 py-1.5 rounded-lg hover:bg-teal-600 transition-colors font-semibold shadow-sm">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-Add
+添加
 </button>
 </div>
-<div id="supporting-col" class="space-y-3 min-h-[300px] bg-blue-50/50 rounded-2xl p-4 border-2 border-dashed border-blue-100 transition-all" ondragover="onDragOver(event)" ondrop="onDrop(event,'supporting')" ondragleave="onDragLeave(event)">
-<p class="text-center text-gray-400 text-sm py-12" id="supporting-empty">Drag items here or click Add</p>
+<div id="supporting-col" class="space-y-3 min-h-[300px] bg-white rounded-2xl p-4 border-2 border-teal-200 transition-all" ondragover="onDragOver(event)" ondrop="onDrop(event,'supporting')" ondragleave="onDragLeave(event)">
+<p class="text-center text-teal-300 text-sm py-12" id="supporting-empty">拖动条目到此处切换分类</p>
 </div>
 </div>
 
 </div>
 
 <!-- Legend -->
-<div class="mt-6 bg-white rounded-2xl shadow-sm p-4">
-<div class="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+<div class="mt-6 bg-blue-50 border-2 border-blue-200 rounded-2xl p-4">
+<div class="flex flex-wrap items-center gap-6 text-sm font-semibold text-blue-900">
 <div class="flex items-center gap-2">
-<div class="toggle bg-indigo-500" onclick="toggleLegend(this)"><div class="toggle-dot" style="left:22px"></div></div>
-<span>Ready</span>
+<div class="toggle bg-blue-600" onclick="toggleLegend(this)"><div class="toggle-dot" style="left:22px"></div></div>
+<span>已准备</span>
 </div>
 <div class="flex items-center gap-2">
-<div class="w-6 h-6 bg-red-100 text-red-600 rounded text-xs flex items-center justify-center font-bold border">原</div>
-<span>Original</span>
+<div class="w-6 h-6 bg-rose-100 text-rose-700 rounded text-xs flex items-center justify-center font-bold border-2 border-rose-300">原</div>
+<span>原件</span>
 </div>
 <div class="flex items-center gap-2">
-<div class="w-6 h-6 bg-gray-100 text-gray-500 rounded text-xs flex items-center justify-center border">印</div>
-<span>Copy</span>
+<div class="w-6 h-6 bg-gray-100 text-gray-500 rounded text-xs flex items-center justify-center border-2 border-gray-300">印</div>
+<span>复印件</span>
 </div>
 <div class="flex items-center gap-2">
-<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/></svg>
-<span>Drag to reorder or move between categories</span>
+<svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/></svg>
+<span>拖动可排序或切换分类</span>
 </div>
 </div>
 </div>
 
 <!-- Tips -->
-<div class="mt-4 bg-amber-50 border border-amber-200 rounded-2xl p-4">
+<div class="mt-4 bg-amber-50 border-2 border-amber-300 rounded-2xl p-4">
 <div class="flex gap-2">
 <svg class="w-5 h-5 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
 <div class="text-sm text-amber-800">
-<p class="font-semibold mb-1">Tips</p>
+<p class="font-semibold mb-1">使用提示</p>
 <ul class="list-disc list-inside space-y-0.5 text-amber-700">
-<li>Click any field to edit inline</li>
-<li>Drag items between Must Have / Supporting to change category</li>
-<li>Changes auto-save to browser</li>
-<li>Use Settings to export/import JSON config</li>
+<li>点击任意字段即可编辑</li>
+<li>拖动条目在必备/辅助材料之间切换分类</li>
+<li>修改自动保存到浏览器</li>
+<li>使用设置导出/导入 JSON 配置</li>
 </ul>
 </div>
 </div>
@@ -138,10 +138,10 @@ Add
 <!-- Header -->
 <div class="flex items-center justify-between mb-6">
 <div>
-<h2 class="text-2xl font-bold text-gray-900">Case Studies</h2>
-<p class="text-sm text-gray-500 mt-1">Browse and add real F1 visa interview experiences</p>
+<h2 class="text-2xl font-bold text-gray-900">案例参考</h2>
+<p class="text-sm text-gray-600 mt-1">浏览并添加真实的 F1 面签经历</p>
 </div>
-<button onclick="openAddCase()" class="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition-colors font-medium shadow-sm">
+<button onclick="openAddCase()" class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors font-semibold shadow-sm">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
 新增案例
 </button>
@@ -149,32 +149,32 @@ Add
 
 <!-- Filters -->
 <div class="flex gap-3 mb-6">
-<button onclick="filterCases('all')" id="filter-all" class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white">全部</button>
-<button onclick="filterCases('approved')" id="filter-approved" class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-700">通过</button>
-<button onclick="filterCases('rejected')" id="filter-rejected" class="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-700">拒签</button>
+<button onclick="filterCases('all')" id="filter-all" class="px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white">全部</button>
+<button onclick="filterCases('approved')" id="filter-approved" class="px-4 py-2 rounded-lg text-sm font-semibold bg-white text-green-700 border-2 border-green-300 hover:bg-green-50">通过</button>
+<button onclick="filterCases('rejected')" id="filter-rejected" class="px-4 py-2 rounded-lg text-sm font-semibold bg-white text-red-700 border-2 border-red-300 hover:bg-red-50">拒签</button>
 </div>
 
-<!-- Approved Section -->
+<!-- 通过 Section -->
 <div class="mb-8">
 <div class="flex items-center gap-2 mb-4">
 <div class="w-3 h-3 rounded-full bg-green-500"></div>
 <h3 class="text-lg font-bold text-green-700">通过案例</h3>
-<span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full" id="approved-count">0</span>
+<span class="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full font-semibold" id="approved-count">0</span>
 </div>
 <div id="approved-cases-list" class="space-y-4">
-<p class="text-gray-400 text-center py-8 bg-white rounded-2xl">No approved cases yet</p>
+<p class="text-gray-300 text-center py-8 bg-white rounded-2xl border-2 border-dashed border-gray-200">暂无通过案例</p>
 </div>
 </div>
 
-<!-- Rejected Section -->
+<!-- 拒签 Section -->
 <div>
 <div class="flex items-center gap-2 mb-4">
 <div class="w-3 h-3 rounded-full bg-red-500"></div>
 <h3 class="text-lg font-bold text-red-700">拒签案例</h3>
-<span class="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full" id="rejected-count">0</span>
+<span class="text-xs text-red-600 bg-red-100 px-2 py-0.5 rounded-full font-semibold" id="rejected-count">0</span>
 </div>
 <div id="rejected-cases-list" class="space-y-4">
-<p class="text-gray-400 text-center py-8 bg-white rounded-2xl">No rejected cases yet</p>
+<p class="text-gray-300 text-center py-8 bg-white rounded-2xl border-2 border-dashed border-gray-200">暂无拒签案例</p>
 </div>
 </div>
 </div>
@@ -182,8 +182,8 @@ Add
 <!-- ===== Q&A PAGE ===== -->
 <div id="page-qa" class="hidden">
 <div class="mb-6">
-<h2 class="text-2xl font-bold text-gray-900">Common Interview Questions</h2>
-<p class="text-sm text-gray-500 mt-1">分类整理的面签常见问题</p>
+<h2 class="text-2xl font-bold text-gray-900">常见面签问题</h2>
+<p class="text-sm text-gray-600 mt-1">分类整理的面签常见问题</p>
 </div>
 
 <div class="space-y-4" id="qa-list">
@@ -204,7 +204,7 @@ Add
 <div class="w-3 h-3 rounded-full bg-purple-500"></div>
 <h3 class="text-lg font-bold text-gray-800">简历模板参考</h3>
 </div>
-<div class="text-sm text-gray-600 space-y-3">
+<div class="text-sm text-gray-700 space-y-3">
 <p class="bg-gray-50 rounded-lg p-3 text-xs font-mono">CV用申请时候的那个的缩减版就行</p>
 <div>
 <p class="font-semibold text-gray-700 mb-2">Structure:</p>
@@ -313,34 +313,38 @@ Awards, Interests, Skills:
 <h3 class="text-lg font-bold text-gray-900 mb-4">新增条目</h3>
 <div class="space-y-4">
 <div>
-<label class="text-sm font-medium text-gray-700">Item Name</label>
-<input id="new-item-name" type="text" placeholder="例如：I-20（已签名）" class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500">
+<label class="text-sm font-medium text-gray-700">物品名称</label>
+<input id="new-item-name" type="text" placeholder="例如：I-20（已签名）" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
 </div>
 <div class="grid grid-cols-2 gap-4">
 <div>
-<label class="text-sm font-medium text-gray-700">Category</label>
-<select id="new-item-category" class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500">
-<option value="required">Must Have</option>
-<option value="supporting">Supporting</option>
+<label class="text-sm font-medium text-gray-700">分类</label>
+<select id="new-item-category" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
+<option value="required">必备</option>
+<option value="supporting">辅助材料</option>
 </select>
 </div>
 <div>
-<label class="text-sm font-medium text-gray-700">要求页面 Acquisition</label>
-<input id="new-item-acquisition" type="text" placeholder="要求页面或网址..." class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500">
+<label class="text-sm font-medium text-gray-700">获取要求/网址</label>
+<input id="new-item-acquisition" type="text" placeholder="要求页面或网址..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
 </div>
 <div>
-<label class="text-sm font-medium text-gray-700">Quantity</label>
-<input id="new-item-qty" type="number" value="1" min="1" class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500">
+<label class="text-sm font-medium text-gray-700">数量</label>
+<input id="new-item-qty" type="number" value="1" min="1" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
 </div>
 </div>
 <div class="flex items-center justify-between">
-<label class="text-sm font-medium text-gray-700">Is Original?</label>
-<div id="new-item-original" class="toggle bg-gray-200" onclick="toggleNewOriginal()"><div class="toggle-dot" style="left:2px"></div></div>
+<label class="text-sm font-semibold text-gray-700">是否原件？</label>
+<div id="new-item-original" class="toggle bg-gray-300" onclick="toggleNewOriginal()"><div class="toggle-dot" style="left:2px"></div></div>
+</div>
+<div>
+<label class="text-sm font-medium text-gray-700">说明（可选）</label>
+<textarea id="new-item-description" rows="2" placeholder="补充说明..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
 </div>
 </div>
 <div class="flex gap-3 mt-6">
-<button onclick="closeAddItem()" class="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">Cancel</button>
-<button onclick="confirmAddItem()" class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">Add</button>
+<button onclick="closeAddItem()" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-50">取消</button>
+<button onclick="confirmAddItem()" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 shadow-sm">添加</button>
 </div>
 </div>
 </div>
@@ -349,68 +353,67 @@ Awards, Interests, Skills:
 <div id="addCaseModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
 <div class="modal-overlay fixed inset-0 bg-black/40" onclick="closeAddCase()"></div>
 <div class="modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
-<h3 class="text-lg font-bold text-gray-900 mb-4">Add New Case</h3>
+<h3 class="text-lg font-bold text-gray-900 mb-4">新增面签案例</h3>
 <div class="space-y-4">
 <div class="grid grid-cols-2 gap-4">
 <div>
-<label class="text-sm font-medium text-gray-700">状态</label>
-<select id="case-status" class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500">
+<label class="text-sm font-semibold text-gray-700">状态</label>
+<select id="case-status" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
 <option value="approved">通过</option>
 <option value="rejected">拒签</option>
-<option value="rejected">Rejected</option>
 </select>
 </div>
 <div>
-<label class="text-sm font-medium text-gray-700">日期</label>
-<input id="case-date" type="date" class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500">
+<label class="text-sm font-semibold text-gray-700">日期</label>
+<input id="case-date" type="date" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
 </div>
 </div>
 <div class="grid grid-cols-3 gap-4">
 <div>
-<label class="text-sm font-medium text-gray-700">窗口号</label>
-<input id="case-window" type="text" placeholder="15" class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500">
+<label class="text-sm font-semibold text-gray-700">窗口号</label>
+<input id="case-window" type="text" placeholder="15" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
 </div>
 <div>
-<label class="text-sm font-medium text-gray-700">VO Type</label>
-<input id="case-vo" type="text" placeholder="白人男性" class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500">
+<label class="text-sm font-semibold text-gray-700">VO类型</label>
+<input id="case-vo" type="text" placeholder="白人男性" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
 </div>
 <div>
-<label class="text-sm font-medium text-gray-700">时长</label>
-<input id="case-duration" type="text" placeholder="约2小时" class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500">
+<label class="text-sm font-semibold text-gray-700">时长</label>
+<input id="case-duration" type="text" placeholder="约2小时" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
 </div>
 </div>
 <div>
-<label class="text-sm font-medium text-gray-700">准备的材料</label>
-<textarea id="case-prep" rows="2" placeholder="护照，I-20，CV..." class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500"></textarea>
+<label class="text-sm font-semibold text-gray-700">准备的材料</label>
+<textarea id="case-prep" rows="2" placeholder="护照，I-20，CV..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
 </div>
 <div>
-<label class="text-sm font-medium text-gray-700">用到的材料</label>
-<textarea id="case-used" rows="2" placeholder="护照，I-20..." class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500"></textarea>
+<label class="text-sm font-semibold text-gray-700">用到的材料</label>
+<textarea id="case-used" rows="2" placeholder="护照，I-20..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
 </div>
 <div>
-<label class="text-sm font-medium text-gray-700">没用上的材料</label>
-<textarea id="case-unused" rows="2" placeholder="照片，现金..." class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500"></textarea>
+<label class="text-sm font-semibold text-gray-700">没用上的材料</label>
+<textarea id="case-unused" rows="2" placeholder="照片，现金..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
 </div>
 <div>
-<label class="text-sm font-medium text-gray-700">时间线</label>
-<textarea id="case-timeline" rows="2" placeholder="时间线..." class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500"></textarea>
+<label class="text-sm font-semibold text-gray-700">时间线</label>
+<textarea id="case-timeline" rows="2" placeholder="时间线..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
 </div>
 <div>
-<label class="text-sm font-medium text-gray-700">面签过程</label>
-<textarea id="case-process" rows="4" placeholder="详细描述面签过程..." class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500"></textarea>
+<label class="text-sm font-semibold text-gray-700">面签过程</label>
+<textarea id="case-process" rows="4" placeholder="详细描述面签过程..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
 </div>
 <div>
-<label class="text-sm font-medium text-gray-700">结果</label>
-<textarea id="case-result" rows="2" placeholder="结果..." class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500"></textarea>
+<label class="text-sm font-semibold text-gray-700">结果</label>
+<textarea id="case-result" rows="2" placeholder="结果..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
 </div>
 <div>
-<label class="text-sm font-medium text-gray-700">小贴士</label>
-<textarea id="case-tips" rows="2" placeholder="小贴士..." class="w-full mt-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500"></textarea>
+<label class="text-sm font-semibold text-gray-700">小贴士</label>
+<textarea id="case-tips" rows="2" placeholder="小贴士..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium"></textarea>
 </div>
 </div>
 <div class="flex gap-3 mt-6">
-<button onclick="closeAddCase()" class="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">Cancel</button>
-<button onclick="confirmAddCase()" class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">Save Case</button>
+<button onclick="closeAddCase()" class="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-50">取消</button>
+<button onclick="confirmAddCase()" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 shadow-sm">保存案例</button>
 </div>
 </div>
 </div>
@@ -419,46 +422,46 @@ Awards, Interests, Skills:
 <div id="settingsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
 <div class="modal-overlay fixed inset-0 bg-black/40" onclick="closeSettings()"></div>
 <div class="modal-content relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
-<h3 class="text-lg font-bold text-gray-900 mb-4">Settings</h3>
+<h3 class="text-lg font-bold text-gray-900 mb-4">设置</h3>
 <div class="space-y-4">
 <div>
-<label class="text-sm font-medium text-gray-700 mb-2 block">Export Config (导出配置)</label>
-<button onclick="exportConfig()" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">
+<label class="text-sm font-medium text-gray-700 mb-2 block">导出清单配置</label>
+<button onclick="exportConfig()" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 shadow-sm">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-Download visa-config.json
+下载 visa-config.json
 </button>
 </div>
 <div>
-<label class="text-sm font-medium text-gray-700 mb-2 block">Import Config (导入配置)</label>
+<label class="text-sm font-medium text-gray-700 mb-2 block">导入清单配置</label>
 <label class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 cursor-pointer">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-Upload visa-config.json
+上传 visa-config.json
 <input type="file" accept=".json" onchange="importConfig(this)" class="hidden">
 </label>
 </div>
 <div class="border-t pt-4">
-<label class="text-sm font-medium text-gray-700 mb-2 block">Case Studies</label>
+<label class="text-sm font-medium text-gray-700 mb-2 block">案例数据</label>
 <div class="space-y-2">
 <button onclick="exportCases()" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-Export Cases
+导出案例
 </button>
 <label class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 cursor-pointer">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-Import Cases
+导入案例
 <input type="file" accept=".json" onchange="importCases(this)" class="hidden">
 </label>
 </div>
 </div>
 <div class="border-t pt-4">
-<button onclick="if(confirm('Clear all checklist data? This cannot be undone.')){localStorage.removeItem('f1visa_items');localStorage.removeItem('f1visa_cases');location.reload();}" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100">
+<button onclick="if(confirm('确定清除所有清单数据？此操作不可撤销！')){localStorage.removeItem('f1visa_items');localStorage.removeItem('f1visa_cases');location.reload();}" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-Reset All Data
+重置所有数据
 </button>
 </div>
 </div>
 <div class="mt-6">
-<button onclick="closeSettings()" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">Close</button>
+<button onclick="closeSettings()" class="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50">关闭</button>
 </div>
 </div>
 </div>
@@ -555,7 +558,7 @@ var col = document.getElementById('required-col');
 var required = items.filter(function(it) { return it.category === 'required'; });
 
 if (required.length === 0) {
-col.innerHTML = '<p class="text-center text-gray-400 text-sm py-12" id="required-empty">Drag items here or click Add</p>';
+col.innerHTML = '<p class="text-center text-gray-400 text-sm py-12" id="required-empty">拖动条目到此处切换分类</p>';
 return;
 }
 col.innerHTML = '';
@@ -569,7 +572,7 @@ var col = document.getElementById('supporting-col');
 var supporting = items.filter(function(it) { return it.category === 'supporting'; });
 
 if (supporting.length === 0) {
-col.innerHTML = '<p class="text-center text-gray-400 text-sm py-12" id="supporting-empty">Drag items here or click Add</p>';
+col.innerHTML = '<p class="text-center text-gray-400 text-sm py-12" id="supporting-empty">拖动条目到此处切换分类</p>';
 return;
 }
 col.innerHTML = '';
@@ -585,38 +588,40 @@ div.id = 'item-' + it.id;
 div.draggable = true;
 div.setAttribute('data-id', it.id);
 
-var originalBg = it.isOriginal ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-500';
+var catBorder = it.category === 'required' ? 'border-l-rose-500' : 'border-l-teal-500';
+var catBg = it.category === 'required' ? 'bg-rose-50' : 'bg-teal-50';
+var originalBg = it.isOriginal ? 'bg-rose-100 text-rose-700 border border-rose-300' : 'bg-gray-100 text-gray-500 border border-gray-300';
 var originalText = it.isOriginal ? '原' : '印';
-var readyBg = it.isReady ? 'bg-indigo-500' : 'bg-gray-200';
+var readyBg = it.isReady ? 'bg-blue-600' : 'bg-gray-300';
 
 div.innerHTML =
-'<div class="flex items-start gap-3">' +
+'<div class="flex items-start gap-3 border-l-4 ' + catBorder + ' ' + catBg + ' rounded-r-xl p-4">' +
 '<div class="flex flex-col items-center gap-2 pt-0.5">' +
 '<div class="drag-handle text-gray-300 hover:text-gray-500 cursor-grab" title="拖动排序">:::</div>' +
 '</div>' +
 '<div class="flex-1 min-w-0">' +
 '<div class="flex items-center gap-2 mb-1">' +
-'<input type="text" value="' + escHtml(it.name) + '" onchange="updateItem(\'' + it.id + '\',\'name\',this.value)" class="font-semibold text-gray-900 bg-transparent border-0 text-sm px-0 py-0 w-full hover:bg-gray-50 focus:bg-gray-100 rounded px-1 -mx-1">'
+'<input type="text" value="' + escHtml(it.name) + '" onchange="updateItem(\'' + it.id + '\',\'name\',this.value)" class="font-bold text-gray-900 bg-transparent border-0 text-base px-0 py-0 w-full hover:bg-white focus:bg-white rounded px-1 -mx-1">'
 + '<span class="shrink-0 text-xs px-1.5 py-0.5 rounded font-bold ' + originalBg + '">' + originalText + '</span>'
 + '</div>'
-+ (it.description ? '<p class="text-xs text-gray-500 mb-2 leading-relaxed px-1">' + escHtml(it.description) + '</p>' : '')
-+ '<div class="flex flex-wrap items-center gap-3 text-xs text-gray-500">' +
++ (it.description ? '<p class="text-sm text-gray-700 mb-3 leading-relaxed px-1 bg-white/60 rounded p-2 border border-gray-200">' + escHtml(it.description) + '</p>' : '')
++ '<div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">' +
 '<div class="flex items-center gap-1">' +
-'<label class="text-gray-400">数:</label>' +
-'<input type="number" value="' + it.quantity + '" min="1" onchange="updateItem(\'' + it.id + '\',\'quantity\',parseInt(this.value))" class="w-12 text-center border border-gray-200 rounded px-1 py-0.5 hover:border-indigo-300 focus:border-indigo-500">' +
+'<label class="text-gray-500 font-medium">数:</label>' +
+'<input type="number" value="' + it.quantity + '" min="1" onchange="updateItem(\'' + it.id + '\',\'quantity\',parseInt(this.value))" class="w-12 text-center border-2 border-gray-200 rounded px-1 py-0.5 hover:border-blue-400 focus:border-blue-500 font-semibold">' +
 '</div>' +
 '<div class="flex items-center gap-1 flex-1 min-w-[120px]">' +
-'<label class="text-gray-400">文件:</label>' +
-'<input type="text" value="' + escHtml(it.filePath) + '" placeholder="填写文件路径..." onchange="updateItem(\'' + it.id + '\',\'filePath\',this.value)" class="flex-1 border border-gray-200 rounded px-2 py-0.5 hover:border-indigo-300 focus:border-indigo-500 truncate">' +
+'<label class="text-gray-500 font-medium">文件:</label>' +
+'<input type="text" value="' + escHtml(it.filePath) + '" placeholder="填写文件路径..." onchange="updateItem(\'' + it.id + '\',\'filePath\',this.value)" class="flex-1 border-2 border-gray-200 rounded px-2 py-0.5 hover:border-blue-400 focus:border-blue-500 truncate text-gray-700">' +
 '</div>' +
 '<div class="flex items-center gap-1 w-full">' +
-'<label class="text-gray-400 shrink-0">要求页面:</label>' +
-'<input type="text" value="' + escHtml(it.acquisition) + '" placeholder="要求页面或网址..." onchange="updateItem(\'' + it.id + '\',\'acquisition\',this.value)" class="flex-1 border border-gray-200 rounded px-2 py-0.5 hover:border-indigo-300 focus:border-indigo-500 text-gray-600">' +
+'<label class="text-gray-500 font-medium shrink-0">要求页面:</label>' +
+'<input type="text" value="' + escHtml(it.acquisition) + '" placeholder="要求页面或网址..." onchange="updateItem(\'' + it.id + '\',\'acquisition\',this.value)" class="flex-1 border-2 border-gray-200 rounded px-2 py-0.5 hover:border-blue-400 focus:border-blue-500 text-gray-700">' +
 '</div>' +
 '</div>' +
 '</div>' +
 '<div class="flex flex-col items-center gap-3">' +
-'<div class="toggle ' + (it.isReady ? 'bg-indigo-500' : 'bg-gray-200') + '" onclick="toggleReady(\'' + it.id + '\')" title="' + (it.isReady ? '已准备' : '未准备') + '">' +
+'<div class="toggle ' + readyBg + '" onclick="toggleReady(\'' + it.id + '\')" title="' + (it.isReady ? '已准备' : '未准备') + '">' +
 '<div class="toggle-dot" style="left:' + (it.isReady ? '22px' : '2px') + '"></div></div>' +
 '<button onclick="deleteItem(\'' + it.id + '\')" class="text-gray-300 hover:text-red-500 transition-colors p-1" title="删除">' +
 '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' +
@@ -670,7 +675,7 @@ renderAll();
 }
 
 function deleteItem(id) {
-if (!confirm('Delete this item?')) return;
+if (!confirm('确定删除此条目？')) return;
 items = items.filter(function(it) { return it.id !== id; });
 saveItems();
 renderAll();
@@ -816,7 +821,7 @@ var approvedList = document.getElementById('approved-cases-list');
 var rejectedList = document.getElementById('rejected-cases-list');
 
 if (approved.length === 0) {
-approvedList.innerHTML = '<p class="text-gray-400 text-center py-8 bg-white rounded-2xl">No approved cases yet</p>';
+approvedList.innerHTML = '<p class="text-gray-300 text-center py-8 bg-white rounded-2xl border-2 border-dashed border-gray-200">暂无通过案例</p>';
 } else {
 approvedList.innerHTML = '';
 approved.forEach(function(c, i) { approvedList.appendChild(createCaseCard(c, i)); });
@@ -831,36 +836,40 @@ rejected.forEach(function(c, i) { rejectedList.appendChild(createCaseCard(c, i))
 }
 
 function createCaseCard(c, idx) {
+var isApproved = c.result === 'approved';
+var cardBorder = isApproved ? 'border-l-4 border-l-green-500' : 'border-l-4 border-l-red-500';
+var badgeClass = isApproved ? 'bg-green-100 text-green-800 border-green-300' : 'bg-red-100 text-red-700 border-red-300';
+var badgeText = isApproved ? '通过' : '拒签';
 var div = document.createElement('div');
-div.className = 'bg-white rounded-2xl shadow-sm p-5 case-enter';
+div.className = 'bg-white rounded-2xl shadow-sm p-5 case-enter border border-gray-200 ' + cardBorder;
 div.innerHTML =
 '<div class="flex items-start justify-between mb-3">' +
 '<div>' +
-'<span class="text-xs text-gray-400">' + c.date + '</span>' +
-'<span class="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Approved</span>' +
+'<span class="text-xs text-gray-500 font-medium">' + c.date + '</span>' +
+'<span class="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full font-bold border border-green-300">' + badgeText + '</span>' +
 '</div>' +
 '<button onclick="deleteCase(' + idx + ')" class="text-gray-300 hover:text-red-500"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>' +
 '</div>' +
-'<div class="grid grid-cols-3 gap-2 mb-3 text-xs">' +
-(c.window ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400">Window</span><p class="font-medium text-gray-800">' + c.window + '</p></div>' : '') +
-(c.vo ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400">VO</span><p class="font-medium text-gray-800">' + c.vo + '</p></div>' : '') +
-(c.duration ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400">Duration</span><p class="font-medium text-gray-800">' + c.duration + '</p></div>' : '') +
+'<div class="grid grid-cols-3 gap-2 mb-3 text-sm">' +
+(c.window ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">领事馆</span><p class="font-semibold text-gray-800">' + c.window + '</p></div>' : '') +
+(c.vo ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">VO</span><p class="font-semibold text-gray-800">' + c.vo + '</p></div>' : '') +
+(c.duration ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">时长</span><p class="font-semibold text-gray-800">' + c.duration + '</p></div>' : '') +
 '</div>' +
-(c.prep ? '<div class="mb-2"><span class="text-xs font-semibold text-red-500">准备:</span><p class="text-xs text-gray-600 mt-0.5">' + c.prep + '</p></div>' : '') +
-(c.used ? '<div class="mb-2"><span class="text-xs font-semibold text-green-600">用到:</span><p class="text-xs text-gray-700 mt-0.5 font-medium">' + c.used + '</p></div>' : '') +
-(c.unused ? '<div class="mb-2"><span class="text-xs font-semibold text-gray-400">没用:</span><p class="text-xs text-gray-500 mt-0.5">' + c.unused + '</p></div>' : '') +
-(c.timeline ? '<div class="mb-2"><span class="text-xs font-semibold text-purple-600">时间线:</span><p class="text-xs text-gray-700 mt-0.5">' + c.timeline + '</p></div>' : '') +
-(c.process ? '<div class="mb-2"><span class="text-xs font-semibold text-orange-600">过程:</span><p class="text-xs text-gray-700 mt-0.5 whitespace-pre-wrap">' + c.process + '</p></div>' : '') +
-(c.result ? '<div class="mb-2"><span class="text-xs font-semibold text-indigo-600">结果:</span><p class="text-xs text-gray-700 mt-0.5">' + c.result + '</p></div>' : '') +
-(c.tips ? '<div class="bg-amber-50 rounded-lg p-2 mt-2"><span class="text-xs font-semibold text-amber-700">贴士:</span><p class="text-xs text-amber-800 mt-0.5">' + c.tips + '</p></div>' : '');
+(c.prep ? '<div class="mb-2"><span class="text-sm font-bold text-rose-600">准备:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + c.prep + '</p></div>' : '') +
+(c.used ? '<div class="mb-2"><span class="text-sm font-bold text-green-600">用到:</span><p class="text-sm text-gray-700 mt-0.5 font-medium leading-relaxed">' + c.used + '</p></div>' : '') +
+(c.unused ? '<div class="mb-2"><span class="text-sm font-bold text-gray-400">没用:</span><p class="text-sm text-gray-500 mt-0.5 leading-relaxed">' + c.unused + '</p></div>' : '') +
+(c.timeline ? '<div class="mb-2"><span class="text-sm font-bold text-purple-600">时间线:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + c.timeline + '</p></div>' : '') +
+(c.process ? '<div class="mb-2"><span class="text-sm font-bold text-orange-600">过程:</span><p class="text-sm text-gray-700 mt-0.5 whitespace-pre-wrap leading-relaxed">' + c.process + '</p></div>' : '') +
+(c.result ? '<div class="mb-2"><span class="text-sm font-bold text-indigo-600">结果:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + c.result + '</p></div>' : '') +
+(c.tips ? '<div class="bg-amber-50 rounded-lg p-3 mt-2 border border-amber-200"><span class="text-sm font-bold text-amber-700">贴士:</span><p class="text-sm text-amber-800 mt-0.5 leading-relaxed">' + c.tips + '</p></div>' : '');
 return div;
 }
 
 function filterCases(f) {
 currentFilter = f;
-document.getElementById('filter-all').className = 'px-4 py-2 rounded-lg text-sm font-medium ' + (f === 'all' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-700');
-document.getElementById('filter-approved').className = 'px-4 py-2 rounded-lg text-sm font-medium ' + (f === 'approved' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-700');
-document.getElementById('filter-rejected').className = 'px-4 py-2 rounded-lg text-sm font-medium ' + (f === 'rejected' ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-700');
+document.getElementById('filter-all').className = 'px-4 py-2 rounded-lg text-sm font-semibold ' + (f === 'all' ? 'bg-blue-600 text-white' : 'bg-white text-blue-700 border-2 border-blue-300 hover:bg-blue-50');
+document.getElementById('filter-approved').className = 'px-4 py-2 rounded-lg text-sm font-semibold ' + (f === 'approved' ? 'bg-green-600 text-white' : 'bg-white text-green-700 border-2 border-green-300 hover:bg-green-50');
+document.getElementById('filter-rejected').className = 'px-4 py-2 rounded-lg text-sm font-semibold ' + (f === 'rejected' ? 'bg-red-600 text-white' : 'bg-white text-red-700 border-2 border-red-300 hover:bg-red-50');
 
 var approved = document.getElementById('approved-cases-list');
 var rejected = document.getElementById('rejected-cases-list');
@@ -899,7 +908,7 @@ var process = document.getElementById('case-process').value.trim();
 var result = document.getElementById('case-result').value.trim();
 var tips = document.getElementById('case-tips').value.trim();
 
-if (!date) { alert('Please select a date'); return; }
+if (!date) { alert('请选择日期'); return; }
 
 cases.push({status, date, window, vo, duration, prep, used, unused, timeline, process, result, tips});
 saveCases();
@@ -914,7 +923,7 @@ document.getElementById(id).value = '';
 }
 
 function deleteCase(idx) {
-if (!confirm('Delete this case?')) return;
+if (!confirm('确定删除此案例？')) return;
 cases.splice(idx, 1);
 saveCases();
 renderCases();
@@ -945,17 +954,17 @@ reader.onload = function(e) {
 try {
 var data = JSON.parse(e.target.result);
 if (data.items && Array.isArray(data.items)) {
-if (confirm('Import ' + data.items.length + ' items? This will replace current data.')) {
+if (confirm('导入 ' + data.items.length + ' 条清单？将覆盖现有数据。')) {
 items = data.items;
 saveItems();
 renderAll();
-alert('Imported successfully!');
+alert('导入成功！');
 }
 } else {
-alert('Invalid config file');
+alert('无效的配置文件');
 }
 } catch(err) {
-alert('Error reading file: ' + err.message);
+alert('读取文件出错：' + err.message);
 }
 };
 reader.readAsText(file);
@@ -978,14 +987,14 @@ reader.onload = function(e) {
 try {
 var data = JSON.parse(e.target.result);
 if (data.cases && Array.isArray(data.cases)) {
-if (confirm('Import ' + data.cases.length + ' cases? This will replace current cases.')) {
+if (confirm('导入 ' + data.cases.length + ' 个案例？将覆盖现有案例。')) {
 cases = data.cases;
 saveCases();
 renderCases();
-alert('Imported successfully!');
+alert('导入成功！');
 }
 } else {
-alert('Invalid cases file');
+alert('无效的案例文件');
 }
 } catch(err) {
 alert('Error reading file: ' + err.message);
@@ -1012,6 +1021,7 @@ document.getElementById('new-item-name').value = '';
 document.getElementById('new-item-category').value = 'required';
 document.getElementById('new-item-qty').value = '1';
 document.getElementById('new-item-acquisition').value = '';
+document.getElementById('new-item-description').value = '';
 }
 
 function confirmAddItem() {
@@ -1019,7 +1029,8 @@ var name = document.getElementById('new-item-name').value.trim();
 var category = document.getElementById('new-item-category').value;
 var qty = parseInt(document.getElementById('new-item-qty').value) || 1;
 var acquisition = document.getElementById('new-item-acquisition').value.trim();
-if (!name) { alert('Please enter item name'); return; }
+var description = document.getElementById('new-item-description').value.trim();
+if (!name) { alert('请输入物品名称'); return; }
 items.push({
 id: uid(),
 name: name,
@@ -1028,6 +1039,7 @@ isOriginal: newOriginal,
 quantity: qty,
 filePath: '',
 acquisition: acquisition,
+description: description,
 isReady: false
 });
 saveItems();
