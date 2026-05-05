@@ -214,7 +214,7 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
 </div>
 
 <!-- ===== CASES PAGE ===== -->
-<div id="page-cases" class="hidden">
+<div id="page-cases" style="display:none">
 
 <!-- Header -->
 <div class="flex items-center justify-between mb-6">
@@ -261,7 +261,7 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
 </div>
 
 <!-- ===== Q&A PAGE ===== -->
-<div id="page-qa" class="hidden">
+<div id="page-qa" style="display:none">
 <div class="mb-6">
 <h2 class="text-2xl font-bold text-gray-900">常见面签问题</h2>
 <p class="text-sm text-gray-600 mt-1">分类整理的面签常见问题</p>
@@ -272,7 +272,7 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
 </div>
 
 <!-- ===== TEMPLATES PAGE ===== -->
-<div id="page-templates" class="hidden">
+<div id="page-templates" style="display:none">
 <div class="mb-6">
 <h2 class="text-2xl font-bold text-gray-900">模板参考</h2>
 <p class="text-sm text-gray-500 mt-1">CV 和 Study Plan 模板参考</p>
@@ -863,10 +863,10 @@ renderAll();
 
 // ===== TABS =====
 function showTab(tab) {
-document.getElementById('page-checklist').className = tab === 'checklist' ? 'block' : 'hidden';
-document.getElementById('page-cases').className = tab === 'cases' ? 'block' : 'hidden';
-document.getElementById('page-qa').className = tab === 'qa' ? 'block' : 'hidden';
-document.getElementById('page-templates').className = tab === 'templates' ? 'block' : 'hidden';
+document.getElementById('page-checklist').style.display = tab === 'checklist' ? 'block' : 'none';
+document.getElementById('page-cases').style.display = tab === 'cases' ? 'block' : 'none';
+document.getElementById('page-qa').style.display = tab === 'qa' ? 'block' : 'none';
+document.getElementById('page-templates').style.display = tab === 'templates' ? 'block' : 'none';
 
 document.getElementById('btn-checklist').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-semibold ' + (tab === 'checklist' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm');
 document.getElementById('btn-cases').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-semibold ' + (tab === 'cases' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm');
@@ -910,7 +910,7 @@ section.innerHTML =
 '</div>' +
 '<svg id="qa-arrow-' + gi + '" class="w-5 h-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>' +
 '</button>' +
-'<div id="qa-content-' + gi + '" class="hidden border-t border-gray-100 p-4">' +
+'<div id="qa-content-' + gi + '" style="display:none" class="border-t border-gray-100 p-4">' +
 '<div class="space-y-2">' +
 group.questions.map(function(q) {
 return '<div class="flex items-start gap-2 p-2 bg-gray-50 rounded-lg"><span class="text-indigo-400 mt-0.5">Q:</span><span class="text-sm text-gray-700">' + escHtml(q) + '</span></div>';
@@ -924,11 +924,11 @@ container.appendChild(section);
 function toggleQA(idx) {
 var content = document.getElementById('qa-content-' + idx);
 var arrow = document.getElementById('qa-arrow-' + idx);
-if (content.classList.contains('hidden')) {
-content.classList.remove('hidden');
+if (content.style.display === 'none' || content.style.display === '') {
+content.style.display = 'block';
 arrow.style.transform = 'rotate(180deg)';
 } else {
-content.classList.add('hidden');
+content.style.display = 'none';
 arrow.style.transform = 'rotate(0deg)';
 }
 }

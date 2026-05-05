@@ -398,6 +398,7 @@ I have received a five-year [funding type] from [source]
 ## 已知 Bug 修复记录
 - **案例页面不显示**：症状为点击「案例」tab 后页面空白或显示"暂无通过/拒签案例"。根因是 `createCaseCard()` 中用 `c.result === 'approved'` 判断状态，但 JSON 中字段名为 `status`，导致判断永远失败。修复：改为 `c.status === 'approved'`。`index.html` 和 `editor.html` 均受影响。
 - **GitHub Pages styles.css 404**：症状为页面样式丢失。根因是 `dist/` 目录在 `.gitignore` 中未提交。修复：从 `.gitignore` 移除 `dist/`，将 `dist/styles.css` 纳入仓库。
+- **页面切换不工作（本地 localhost）**：症状为点击「案例/问答/模板」tab 后页面不切换，显示空白或叠在一起。根因是 `showTab()` 使用 `className = 'hidden'` 切换页面可见性，但 Tailwind 的 `.hidden` class 依赖 `dist/styles.css` 正确加载。修复：页面 div 改用 `style="display:none"` 初始化，`showTab()` 改用 `style.display` 控制可见性。QA 展开收起同理，改用 `style.display`。**所有隐藏/显示逻辑必须使用 `style.display`，禁止依赖 `.hidden` class。**
 
 ## Shell 规范（PowerShell）
 - PowerShell 不支持 Bash 的 `&&` 链接命令。
