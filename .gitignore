@@ -20,7 +20,6 @@ desktop.ini
 *.log
 npm-debug.log*
 
-# Build output
+# Build tools (committed for reproducibility)
 node_modules/
-dist/
 src/
