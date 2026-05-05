@@ -10,33 +10,33 @@
 ### 实体材料
 | 材料 | 实际用到 |
 |------|----------|
-| 护照 | ✅ |
-| 照片 | ❌ |
-| 身份证 | ✅ |
-| 户口本 | ❌ |
-| 50元现金 | ❌ |
+| Passport (护照) | ✅ |
+| Photo (照片) | ❌ |
+| National ID Card (居民身份证) | ✅ |
+| Household Registration Booklet / Hukou (户口本) | ❌ |
+| Cash (现金) | ❌ |
 
 ### 打印材料
 | 材料 | 实际用到 |
 |------|----------|
-| DS-160 confirmation | ❌ |
-| F1 面签 appointment confirmation | ❌ |
-| I-20 (signed) | ✅ |
-| SEVIS I-901 Fee Receipt | ❌ |
-| Admission letter | ❌ |
-| Funding letter | ❌ |
-| 奖学金 letter | ❌ |
-| 资产证明 | ❌ |
-| CV | ✅ |
-| Study plan | ❌ |
-| Prof. CV | ❌ |
-| 毕业证学信网（中英文） | ❌ |
-| 学位证学信网（中英文） | ❌ |
-| 中英文成绩单 | ❌ |
-| GRE score | ❌ |
-| TOEFL score | ❌ |
+| Form DS-160 Confirmation Page (DS-160 确认页) | ❌ |
+| Visa Appointment Confirmation (签证预约确认页) | ❌ |
+| Form I-20 — Certificate of Eligibility for Nonimmigrant Student Status (F-1) | ✅ |
+| SEVIS I-901 Fee Receipt (SEVIS I-901 缴费收据) | ❌ |
+| Admission/Offer Letter (录取通知书) | ❌ |
+| Proof of Financial Ability (资助证明) | ❌ |
+| Scholarship Award Letter (奖学金证明) | ❌ |
+| Proof of Financial Resources / Bank Statement (资产证明 / 银行存款证明) | ❌ |
+| Curriculum Vitae / Resume (个人简历 CV) | ✅ |
+| Statement of Purpose / Study Plan (学习计划) | ❌ |
+| Professor's CV / Supervisor CV (导师简历) | ❌ |
+| Graduation Certificate — CHESICC Verification (毕业证学信网认证) | ❌ |
+| Degree Certificate — CHESICC Verification (学位证学信网认证) | ❌ |
+| Academic Transcript — Official (中英文成绩单) | ❌ |
+| GRE Score Report (GRE 成绩单) | ❌ |
+| English Proficiency Score Report — TOEFL/IELTS (英语语言成绩单) | ❌ |
 | PhD program intro. | ❌ |
-| Publications | ❌ |
+| Published Research / Publications (已发表论文或作品集) | ❌ |
 
 **说明：** 不一定都需要，能想到的都带了。✅ 实际用到的材料。
 
@@ -375,3 +375,7 @@ I have received a five-year [funding type] from [source]
 
 ## 文件位置
 - 清单网页: `index.html`
+
+## UI 规范
+- **问答页 (Q&A) 必须保留为英文**，不可翻译成其他语言
+- 配色方案：纯白底 + 天蓝色导航 + 玫瑰红必备 / 青绿辅助，双语对比度要高

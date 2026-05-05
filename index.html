@@ -16,8 +16,7 @@ input[type="text"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-
 input[type="number"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-radius: 4px; }
 textarea:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-radius: 4px; }
 .badge { transition: all 0.2s; }
-.toggle { position: relative; width: 44px; height: 24px; border-radius: 12px; cursor: pointer; transition: background 0.2s; }
-.toggle-dot { position: absolute; top: 2px; width: 20px; height: 20px; border-radius: 50%; background: white; transition: left 0.2s; }
+input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
 .modal-overlay { animation: fadeIn 0.15s ease; }
 .modal-content { animation: slideUp 0.2s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -44,6 +43,10 @@ textarea:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-radius: 4p
 <button onclick="showSettings()" class="p-2 rounded-lg text-blue-600 hover:bg-blue-100" title="设置">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
 </button>
+<button onclick="exportConfig()" class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold bg-green-600 text-white hover:bg-green-700 shadow-sm" title="保存配置">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+保存配置
+</button>
 </div>
 </div>
 </div>
@@ -63,6 +66,9 @@ textarea:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-radius: 4p
 <div class="flex items-center gap-2">
 <div class="w-3 h-3 rounded-full bg-rose-500"></div>
 <h2 class="text-lg font-bold text-rose-800">必备清单</h2>
+<span class="relative group cursor-help" title="面签时必须携带的材料，无则必拒">
+<svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+</span>
 </div>
 <button onclick="addItem('required')" class="flex items-center gap-1 text-sm bg-rose-500 text-white px-3 py-1.5 rounded-lg hover:bg-rose-600 transition-colors font-semibold shadow-sm">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -80,6 +86,9 @@ textarea:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-radius: 4p
 <div class="flex items-center gap-2">
 <div class="w-3 h-3 rounded-full bg-teal-500"></div>
 <h2 class="text-lg font-bold text-teal-800">辅助材料</h2>
+<span class="relative group cursor-help" title="有助于增强说服力的补充材料，提高通过率">
+<svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+</span>
 </div>
 <button onclick="addItem('supporting')" class="flex items-center gap-1 text-sm bg-teal-500 text-white px-3 py-1.5 rounded-lg hover:bg-teal-600 transition-colors font-semibold shadow-sm">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -97,8 +106,8 @@ textarea:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-radius: 4p
 <div class="mt-6 bg-blue-50 border-2 border-blue-200 rounded-2xl p-4">
 <div class="flex flex-wrap items-center gap-6 text-sm font-semibold text-blue-900">
 <div class="flex items-center gap-2">
-<div class="toggle bg-blue-600" onclick="toggleLegend(this)"><div class="toggle-dot" style="left:22px"></div></div>
-<span>已准备</span>
+<input type="checkbox" checked disabled class="w-5 h-5 rounded border-2 border-gray-300 accent-blue-600">
+<span class="font-semibold text-blue-900">已准备</span>
 </div>
 <div class="flex items-center gap-2">
 <div class="w-6 h-6 bg-rose-100 text-rose-700 rounded text-xs flex items-center justify-center font-bold border-2 border-rose-300">原</div>
@@ -111,24 +120,6 @@ textarea:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; border-radius: 4p
 <div class="flex items-center gap-2">
 <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/></svg>
 <span>拖动可排序或切换分类</span>
-</div>
-</div>
-</div>
-
-<!-- Tips -->
-<div class="mt-4 bg-amber-50 border-2 border-amber-300 rounded-2xl p-4">
-<div class="flex gap-2">
-<svg class="w-5 h-5 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-<div class="text-sm text-amber-800">
-<p class="font-semibold mb-1">使用提示</p>
-<ul class="list-disc list-inside space-y-0.5 text-amber-700">
-<li>点击任意字段即可编辑</li>
-<li>拖动条目在必备/辅助材料之间切换分类</li>
-<li>修改自动保存到浏览器</li>
-<li>使用设置导出/导入 JSON 配置</li>
-</ul>
-</div>
-</div>
 </div>
 </div>
 
@@ -432,12 +423,16 @@ Awards, Interests, Skills:
 </button>
 </div>
 <div>
-<label class="text-sm font-medium text-gray-700 mb-2 block">导入清单配置</label>
+<label class="text-sm font-semibold text-gray-700 mb-2 block">导入清单配置</label>
 <label class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 cursor-pointer">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
 上传 visa-config.json
 <input type="file" accept=".json" onchange="importConfig(this)" class="hidden">
 </label>
+<button onclick="loadConfigFile()" class="w-full flex items-center justify-center gap-2 px-4 py-2 mt-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-100 border border-blue-200">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m0 0L8 8m4-4v12"/></svg>
+从 visa-config.json 加载（本地）
+</button>
 </div>
 <div class="border-t pt-4">
 <label class="text-sm font-medium text-gray-700 mb-2 block">案例数据</label>
@@ -479,7 +474,6 @@ var draggedItemId = null;
 function init() {
 loadItems();
 loadCases();
-renderAll();
 renderQA();
 }
 
@@ -496,37 +490,57 @@ function loadItems() {
 var s = localStorage.getItem('f1visa_items');
 if (s) {
 items = JSON.parse(s);
+renderAll();
 } else {
+fetch('visa-config.json')
+.then(function(res) { return res.json(); })
+.then(function(data) {
+if (data.items && Array.isArray(data.items)) {
+items = data.items;
+} else {
+initDefaultItems();
+}
+saveItems();
+renderAll();
+})
+.catch(function() {
+initDefaultItems();
+saveItems();
+renderAll();
+});
+}
+}
+
+function initDefaultItems() {
 // Default items
 items = [
-{id: uid(), name: '护照 Passport', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: true, description: '有效期需超过6个月。若计划9月入学，建议有效期至次年3月以后。新版电子护照封面有红色国徽图案，旧版蓝本封面。'},
-{id: uid(), name: '旧护照 Old Passport', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '如有旧护照请一并携带，尤其是有之前F1或其他类型签证记录的。签证官可能会翻看。'},
-{id: uid(), name: '身份证 ID Card', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: true, description: '中华人民共和国居民身份证原件，正反面都要。'},
-{id: uid(), name: '照片 Photo', category: 'required', isOriginal: true, quantity: 2, filePath: '', acquisition: '', isReady: false, description: '6个月内近照，白底，50mm×50mm，头部占画面70-80%，不许露齿、不许戴眼镜、不许美瞳。美国签证照片要求严格，建议到专业照相馆说明是"美国签证照片"。即使电子照片没问题，现场仍建议备2张纸质版。'},
-{id: uid(), name: '50元现金 Cash', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '面签一般不收费，但存包、打印、途中应急都需要现金。建议备50-100元零钱。地铁站寄存柜约30元，路边寄存点统一30元。'},
-{id: uid(), name: 'DS-160 Confirmation', category: 'required', isOriginal: false, quantity: 1, filePath: '', acquisition: 'https://ceac.state.gov/GenNIV/Default.aspx', isReady: false, description: 'DS-160表格确认页（带照片的那页），需彩色打印。整页为A4大小，不要缩印。确认页有条形码，面签时签证官会扫描。建议多打2份备用。'},
-{id: uid(), name: 'F1 预约确认 Appointment', category: 'required', isOriginal: false, quantity: 1, filePath: '', acquisition: 'https://cgifederal.secure.force.com/', isReady: false, description: '美签预约确认页（A4打印），上面有预约编号、面签日期和时间。凭此页才能进入领事馆。建议打印2份。'},
-{id: uid(), name: 'I-20 (Signed)', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: true, description: '学校发的I-20表格，必须原件。需提前在第一页左下方签名（未成年需监护人签名），签名处为蓝色圆珠笔，不能有出边框。姓名需与护照一致。SEVIS ID在右上角N开头数字。'},
-{id: uid(), name: 'SEVIS I-901 Receipt', category: 'required', isOriginal: false, quantity: 1, filePath: '', acquisition: 'https://fmjfee.com/', isReady: false, description: 'SEVIS费缴纳收据，350美元。在SEVIS系统缴纳后打印，必须在面签前至少3天缴纳。建议同时备好截图。'},
-{id: uid(), name: 'Admission Letter', category: 'supporting', isOriginal: false, quantity: 1, filePath: 'docs/admission-letters/Goldsmiths_Admission.pdf', acquisition: '', isReady: false, description: '学校录取通知书，建议彩色打印。可同时打印offer邮件截图作为佐证。'},
-{id: uid(), name: 'Funding Letter', category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '资助证明信，说明谁资助你的学费和生活费。若为自费，需银行出具存款证明。若为奖学金覆盖，需学校出具Funding Letter注明金额和期限。'},
-{id: uid(), name: '奖学金 Letter', category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '如获得奖学金，需提供奖学金证明文件，注明奖学金类型（TA/RA/Fellowship）、金额、覆盖期限。'},
-{id: uid(), name: '资产证明 Bank Statement', category: 'supporting', isOriginal: true, quantity: 1, filePath: 'docs/bank-statement/CertificateOfDeposit.pdf', acquisition: '银行网点办理存款证明', isReady: false, description: '银行出具的存款证明（中英文），需显示存款金额足够覆盖第一年学费+生活费。建议金额不低于I-20上注明的年费用总额。开具日期需在面签前1个月内。'},
-{id: uid(), name: '个人简历 CV', category: 'supporting', isOriginal: false, quantity: 1, filePath: 'docs/cv/HanqingLi_Resume_2026.pdf', acquisition: '', isReady: true, description: '英文简历，控制在1-2页。包含教育背景、项目经历、实习经历、技能、获奖等。签证官可能会就简历内容提问。'},
-{id: uid(), name: 'Study Plan', category: 'supporting', isOriginal: false, quantity: 1, filePath: 'docs/study-plan/StoneSpeech.pdf', acquisition: '', isReady: false, description: '学习计划，说明你来美国读这个专业的目的、为什么选这所学校、毕业后的打算（回国）。建议简洁，1-2页。签证官可能不主动要，但准备好有备无患。'},
-{id: uid(), name: '导师 CV Prof. CV', category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '外导（导师）的个人简历或简介，可从学校官网下载。重点展示导师的研究方向和学术成就，证明这个项目的学术价值。'},
-{id: uid(), name: '毕业证学信网（中英文）', category: 'supporting', isOriginal: true, quantity: 1, filePath: '', acquisition: '学信网: https://www.chsi.com.cn/', isReady: false, description: '本科毕业证书原件+学信网英文认证报告。学历认证可在学信网申请，一般需要3-5个工作日。现场带原件即可，认证报告可备电子版。'},
-{id: uid(), name: '学位证学信网（中英文）', category: 'supporting', isOriginal: true, quantity: 1, filePath: '', acquisition: '学信网: https://www.chsi.com.cn/', isReady: false, description: '学士学位证书原件+学信网英文认证报告。注意：本科学位证和毕业证是两份文件，都需要。若有海外学历，还需提供教育部留学服务中心的认证。'},
-{id: uid(), name: '中英文成绩单', category: 'supporting', isOriginal: true, quantity: 1, filePath: 'docs/transcripts/SHU-AcademicTranscript.pdf', acquisition: '学校档案馆/教务处', isReady: false, description: '本科完整成绩单（中英文），需盖学校教务处或档案馆红章。绩点/GPA需换算注明。建议多打几份，面签官可能不收但申请学校时也需要。'},
-{id: uid(), name: 'GRE Score', category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: 'ETS: https://www.ets.org/', isReady: false, description: 'GRE成绩单，若项目要求的话。需从ETS官网发送电子成绩至学校（若学校要求）。现场一般不需要带纸质版，ETS账户截图备一份即可。'},
-{id: uid(), name: 'TOEFL/IELTS Score', category: 'supporting', isOriginal: false, quantity: 1, filePath: 'docs/english-scores/IELTS.pdf', acquisition: 'ETS/IELTS官网', isReady: false, description: '语言成绩单（TOEFL或IELTS），需在有效期内。IELTS成绩单原件只有一份，建议提前扫描留存。TOEFL可从ETS官网下载电子版打印。'},
-{id: uid(), name: 'Publications', category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '已发表的论文或作品集（如有）。研究生申请者可能需要，演示你的学术能力。若论文被接收但未发表，可带acceptance letter。'},
-{id: uid(), name: '户口本 Hukou', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '居民户口簿原件，包含本人信息页。若父母为资助人，可能需要证明亲属关系。集体户口需到户籍所在地派出所开具证明。'},
-{id: uid(), name: '社媒清单 Social Media List', category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: 'DS-160 表格填写后补充', isReady: false, description: 'DS-160表格中填写的社交媒体账号列表。填写完DS-160后会生成，建议打印一份备用。若有未填写的账号被查到可能引起怀疑。常见平台：WeChat, 小红书, 微博, LinkedIn等。'},
-{id: uid(), name: '导师支持信 Prof. Support Letter', category: 'supporting', isOriginal: false, quantity: 1, filePath: 'docs/reference-letters/LiQi_Reference.pdf', acquisition: '', isReady: false, description: '导师（外导）的推荐信，说明他们愿意接收你并提供指导。最好打印在有导师抬头的信纸上（电子签名也可）。'},
+{id: uid(), name: 'Passport (护照)', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: true, description: '有效期需超过6个月。若计划9月入学，建议有效期至次年3月以后。新版电子护照封面有红色国徽图案，旧版蓝本封面。'},
+{id: uid(), name: 'Previous Passport (旧护照)', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '如有旧护照请一并携带，尤其是有之前F1或其他类型签证记录的。签证官可能会翻看。'},
+{id: uid(), name: 'National ID Card (居民身份证)', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: true, description: '中华人民共和国居民身份证原件，正反面都要。'},
+{id: uid(), name: 'Photo (照片)', category: 'required', isOriginal: true, quantity: 2, filePath: '', acquisition: '', isReady: false, description: '6个月内近照，白底，50mm×50mm，头部占画面70-80%，不许露齿、不许戴眼镜、不许美瞳。美国签证照片要求严格，建议到专业照相馆说明是"美国签证照片"。即使电子照片没问题，现场仍建议备2张纸质版。'},
+{id: uid(), name: 'Cash (现金)', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '面签一般不收费，但存包、打印、途中应急都需要现金。建议备50-100元零钱。地铁站寄存柜约30元，路边寄存点统一30元。'},
+{id: uid(), name: 'Form DS-160 Confirmation Page (DS-160 确认页)', category: 'required', isOriginal: false, quantity: 1, filePath: '', acquisition: 'https://ceac.state.gov/GenNIV/Default.aspx', isReady: false, description: 'DS-160表格确认页（带照片的那页），需彩色打印。整页为A4大小，不要缩印。确认页有条形码，面签时签证官会扫描。建议多打2份备用。'},
+{id: uid(), name: 'Visa Appointment Confirmation (签证预约确认页)', category: 'required', isOriginal: false, quantity: 1, filePath: '', acquisition: 'https://cgifederal.secure.force.com/', isReady: false, description: '美签预约确认页（A4打印），上面有预约编号、面签日期和时间。凭此页才能进入领事馆。建议打印2份。'},
+{id: uid(), name: 'Form I-20 — Certificate of Eligibility for Nonimmigrant Student Status (F-1)', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: true, description: '学校发的I-20表格，必须原件。需提前在第一页左下方签名（未成年需监护人签名），签名处为蓝色圆珠笔，不能有出边框。姓名需与护照一致。SEVIS ID在右上角N开头数字。'},
+{id: uid(), name: 'SEVIS I-901 Fee Receipt (SEVIS I-901 缴费收据)', category: 'required', isOriginal: false, quantity: 1, filePath: '', acquisition: 'https://fmjfee.com/', isReady: false, description: 'SEVIS费缴纳收据，350美元。在SEVIS系统缴纳后打印，必须在面签前至少3天缴纳。建议同时备好截图。'},
+{id: uid(), name: 'Admission/Offer Letter (录取通知书)', category: 'supporting', isOriginal: false, quantity: 1, filePath: 'docs/admission-letters/Goldsmiths_Admission.pdf', acquisition: '', isReady: false, description: '学校录取通知书，建议彩色打印。可同时打印offer邮件截图作为佐证。'},
+{id: uid(), name: 'Proof of Financial Ability (资助证明)', category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '资助证明信，说明谁资助你的学费和生活费。若为自费，需银行出具存款证明。若为奖学金覆盖，需学校出具Funding Letter注明金额和期限。'},
+{id: uid(), name: 'Scholarship Award Letter (奖学金证明)', category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '如获得奖学金，需提供奖学金证明文件，注明奖学金类型（TA/RA/Fellowship）、金额、覆盖期限。'},
+{id: uid(), name: 'Proof of Financial Resources / Bank Statement (资产证明 / 银行存款证明)', category: 'supporting', isOriginal: true, quantity: 1, filePath: 'docs/bank-statement/CertificateOfDeposit.pdf', acquisition: '银行网点办理存款证明', isReady: false, description: '银行出具的存款证明（中英文），需显示存款金额足够覆盖第一年学费+生活费。建议金额不低于I-20上注明的年费用总额。开具日期需在面签前1个月内。'},
+{id: uid(), name: 'Curriculum Vitae / Resume (个人简历 CV)', category: 'supporting', isOriginal: false, quantity: 1, filePath: 'docs/cv/HanqingLi_Resume_2026.pdf', acquisition: '', isReady: true, description: '英文简历，控制在1-2页。包含教育背景、项目经历、实习经历、技能、获奖等。签证官可能会就简历内容提问。'},
+{id: uid(), name: 'Statement of Purpose / Study Plan (学习计划)', category: 'supporting', isOriginal: false, quantity: 1, filePath: 'docs/study-plan/StoneSpeech.pdf', acquisition: '', isReady: false, description: '学习计划，说明你来美国读这个专业的目的、为什么选这所学校、毕业后的打算（回国）。建议简洁，1-2页。签证官可能不主动要，但准备好有备无患。'},
+{id: uid(), name: "Professor's CV / Supervisor CV (导师简历)", category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '外导（导师）的个人简历或简介，可从学校官网下载。重点展示导师的研究方向和学术成就，证明这个项目的学术价值。'},
+{id: uid(), name: 'Graduation Certificate — CHESICC Verification (毕业证学信网认证)', category: 'supporting', isOriginal: true, quantity: 1, filePath: '', acquisition: '学信网: https://www.chsi.com.cn/', isReady: false, description: '本科毕业证书原件+学信网英文认证报告。学历认证可在学信网申请，一般需要3-5个工作日。现场带原件即可，认证报告可备电子版。'},
+{id: uid(), name: 'Degree Certificate — CHESICC Verification (学位证学信网认证)', category: 'supporting', isOriginal: true, quantity: 1, filePath: '', acquisition: '学信网: https://www.chsi.com.cn/', isReady: false, description: '学士学位证书原件+学信网英文认证报告。注意：本科学位证和毕业证是两份文件，都需要。若有海外学历，还需提供教育部留学服务中心的认证。'},
+{id: uid(), name: 'Academic Transcript — Official (中英文成绩单)', category: 'supporting', isOriginal: true, quantity: 1, filePath: 'docs/transcripts/SHU-AcademicTranscript.pdf', acquisition: '学校档案馆/教务处', isReady: false, description: '本科完整成绩单（中英文），需盖学校教务处或档案馆红章。绩点/GPA需换算注明。建议多打几份，面签官可能不收但申请学校时也需要。'},
+{id: uid(), name: 'GRE Score Report (GRE 成绩单)', category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: 'ETS: https://www.ets.org/', isReady: false, description: 'GRE成绩单，若项目要求的话。需从ETS官网发送电子成绩至学校（若学校要求）。现场一般不需要带纸质版，ETS账户截图备一份即可。'},
+{id: uid(), name: 'English Proficiency Score Report — TOEFL/IELTS (英语语言成绩单)', category: 'supporting', isOriginal: false, quantity: 1, filePath: 'docs/english-scores/IELTS.pdf', acquisition: 'ETS/IELTS官网', isReady: false, description: '语言成绩单（TOEFL或IELTS），需在有效期内。IELTS成绩单原件只有一份，建议提前扫描留存。TOEFL可从ETS官网下载电子版打印。'},
+{id: uid(), name: 'Published Research / Publications (已发表论文或作品集)', category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '已发表的论文或作品集（如有）。研究生申请者可能需要，演示你的学术能力。若论文被接收但未发表，可带acceptance letter。'},
+{id: uid(), name: 'Household Registration Booklet / Hukou (户口本)', category: 'required', isOriginal: true, quantity: 1, filePath: '', acquisition: '', isReady: false, description: '居民户口簿原件，包含本人信息页。若父母为资助人，可能需要证明亲属关系。集体户口需到户籍所在地派出所开具证明。'},
+{id: uid(), name: 'Social Media Identifiers (社媒账号信息 — DS-160 必填)', category: 'supporting', isOriginal: false, quantity: 1, filePath: '', acquisition: 'DS-160 表格填写后补充', isReady: false, description: 'DS-160表格中填写的社交媒体账号列表。填写完DS-160后会生成，建议打印一份备用。若有未填写的账号被查到可能引起怀疑。常见平台：WeChat, 小红书, 微博, LinkedIn等。'},
+{id: uid(), name: "Professor's Letter of Support (导师支持信)", category: 'supporting', isOriginal: false, quantity: 1, filePath: 'docs/reference-letters/LiQi_Reference.pdf', acquisition: '', isReady: false, description: '导师（外导）的推荐信，说明他们愿意接收你并提供指导。最好打印在有导师抬头的信纸上（电子签名也可）。'},
 ];
 saveItems();
-}
 }
 
 function loadCases() {
@@ -582,51 +596,45 @@ col.appendChild(createItemCard(it));
 }
 
 function createItemCard(it) {
+var catBorder = it.category === 'required' ? 'border-amber-400' : 'border-blue-400';
+var catBg     = it.category === 'required' ? 'bg-amber-50' : 'bg-blue-50';
+var originalBg   = it.isOriginal ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500';
+var originalText  = it.isOriginal ? '原件' : '复印件';
+
 var div = document.createElement('div');
 div.className = 'item-card sortable-item bg-white rounded-xl p-4 shadow-sm';
 div.id = 'item-' + it.id;
 div.draggable = true;
 div.setAttribute('data-id', it.id);
 
-var catBorder = it.category === 'required' ? 'border-l-rose-500' : 'border-l-teal-500';
-var catBg = it.category === 'required' ? 'bg-rose-50' : 'bg-teal-50';
-var originalBg = it.isOriginal ? 'bg-rose-100 text-rose-700 border border-rose-300' : 'bg-gray-100 text-gray-500 border border-gray-300';
-var originalText = it.isOriginal ? '原' : '印';
-var readyBg = it.isReady ? 'bg-blue-600' : 'bg-gray-300';
-
 div.innerHTML =
-'<div class="flex items-start gap-3 border-l-4 ' + catBorder + ' ' + catBg + ' rounded-r-xl p-4">' +
-'<div class="flex flex-col items-center gap-2 pt-0.5">' +
+'<div class="flex items-start gap-2 border-l-4 ' + catBorder + ' ' + catBg + ' rounded-r-xl px-4 py-3">' +
+'<div class="flex flex-col items-center gap-2 pt-1 shrink-0">' +
 '<div class="drag-handle text-gray-300 hover:text-gray-500 cursor-grab" title="拖动排序">:::</div>' +
+'<input type="checkbox" ' + (it.isReady ? 'checked' : '') + ' onchange="toggleReady(\'' + it.id + '\')" class="w-5 h-5 rounded border-2 border-gray-300 accent-blue-600 cursor-pointer">' +
 '</div>' +
-'<div class="flex-1 min-w-0">' +
-'<div class="flex items-center gap-2 mb-1">' +
-'<input type="text" value="' + escHtml(it.name) + '" onchange="updateItem(\'' + it.id + '\',\'name\',this.value)" class="font-bold text-gray-900 bg-transparent border-0 text-base px-0 py-0 w-full hover:bg-white focus:bg-white rounded px-1 -mx-1">'
-+ '<span class="shrink-0 text-xs px-1.5 py-0.5 rounded font-bold ' + originalBg + '">' + originalText + '</span>'
-+ '</div>'
-+ (it.description ? '<p class="text-sm text-gray-700 mb-3 leading-relaxed px-1 bg-white/60 rounded p-2 border border-gray-200">' + escHtml(it.description) + '</p>' : '')
-+ '<div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">' +
-'<div class="flex items-center gap-1">' +
-'<label class="text-gray-500 font-medium">数:</label>' +
-'<input type="number" value="' + it.quantity + '" min="1" onchange="updateItem(\'' + it.id + '\',\'quantity\',parseInt(this.value))" class="w-12 text-center border-2 border-gray-200 rounded px-1 py-0.5 hover:border-blue-400 focus:border-blue-500 font-semibold">' +
+'<div class="flex-1 min-w-0 space-y-1">' +
+'<div class="flex items-center gap-2 flex-wrap">' +
+'<input type="text" value="' + escHtml(it.name) + '" onchange="updateItem(\'' + it.id + '\',\'name\',this.value)" class="font-bold text-gray-900 bg-transparent border-0 text-base px-1 py-0.5 w-auto min-w-[120px] max-w-[300px] hover:bg-white focus:bg-white rounded">' +
+'<select onchange="updateItem(\'' + it.id + '\',\'isOriginal\',this.value===\'true\')" class="shrink-0 text-xs px-1.5 py-0.5 rounded font-bold border-0 cursor-pointer ' + originalBg + '">' +
+'<option value="true" ' + (it.isOriginal ? 'selected' : '') + '>原件</option>' +
+'<option value="false" ' + (!it.isOriginal ? 'selected' : '') + '>复印件</option>' +
+'</select>' +
+'<input type="number" value="' + it.quantity + '" min="1" max="99" onchange="updateItem(\'' + it.id + '\',\'quantity\',parseInt(this.value)||1)" class="shrink-0 text-xs w-12 px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 border-0 text-center hover:bg-white focus:bg-white">' +
 '</div>' +
-'<div class="flex items-center gap-1 flex-1 min-w-[120px]">' +
-'<label class="text-gray-500 font-medium">文件:</label>' +
-'<input type="text" value="' + escHtml(it.filePath) + '" placeholder="填写文件路径..." onchange="updateItem(\'' + it.id + '\',\'filePath\',this.value)" class="flex-1 border-2 border-gray-200 rounded px-2 py-0.5 hover:border-blue-400 focus:border-blue-500 truncate text-gray-700">' +
+'<div class="flex items-center gap-2">' +
+'<span class="text-xs text-gray-400 shrink-0">📁</span>' +
+'<input type="text" value="' + escHtml(it.filePath) + '" onchange="updateItem(\'' + it.id + '\',\'filePath\',this.value)" placeholder="文件路径" class="flex-1 text-xs text-gray-500 bg-transparent border-0 px-1 py-0.5 hover:bg-white focus:bg-white rounded w-full">' +
 '</div>' +
-'<div class="flex items-center gap-1 w-full">' +
-'<label class="text-gray-500 font-medium shrink-0">要求页面:</label>' +
-'<input type="text" value="' + escHtml(it.acquisition) + '" placeholder="要求页面或网址..." onchange="updateItem(\'' + it.id + '\',\'acquisition\',this.value)" class="flex-1 border-2 border-gray-200 rounded px-2 py-0.5 hover:border-blue-400 focus:border-blue-500 text-gray-700">' +
+'<div class="flex items-center gap-2">' +
+'<span class="text-xs text-gray-400 shrink-0">🔗</span>' +
+'<input type="text" value="' + escHtml(it.acquisition) + '" onchange="updateItem(\'' + it.id + '\',\'acquisition\',this.value)" placeholder="获取方式/来源" class="flex-1 text-xs text-gray-500 bg-transparent border-0 px-1 py-0.5 hover:bg-white focus:bg-white rounded w-full">' +
 '</div>' +
+(it.description ? '<p class="text-xs text-gray-600 leading-relaxed px-1">' + escHtml(it.description) + '</p>' : '') +
 '</div>' +
-'</div>' +
-'<div class="flex flex-col items-center gap-3">' +
-'<div class="toggle ' + readyBg + '" onclick="toggleReady(\'' + it.id + '\')" title="' + (it.isReady ? '已准备' : '未准备') + '">' +
-'<div class="toggle-dot" style="left:' + (it.isReady ? '22px' : '2px') + '"></div></div>' +
-'<button onclick="deleteItem(\'' + it.id + '\')" class="text-gray-300 hover:text-red-500 transition-colors p-1" title="删除">' +
+'<button onclick="deleteItem(\'' + it.id + '\')" class="shrink-0 text-gray-300 hover:text-red-500 transition-colors p-1 mt-1" title="删除">' +
 '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' +
 '</button>' +
-'</div>' +
 '</div>';
 
 // Drag events
@@ -828,7 +836,7 @@ approved.forEach(function(c, i) { approvedList.appendChild(createCaseCard(c, i))
 }
 
 if (rejected.length === 0) {
-rejectedList.innerHTML = '<p class="text-gray-400 text-center py-8 bg-white rounded-2xl">No rejected cases yet</p>';
+rejectedList.innerHTML = '<p class="text-gray-300 text-center py-8 bg-white rounded-2xl border-2 border-dashed border-gray-200">暂无拒签案例</p>';
 } else {
 rejectedList.innerHTML = '';
 rejected.forEach(function(c, i) { rejectedList.appendChild(createCaseCard(c, i)); });
@@ -935,6 +943,36 @@ document.getElementById('settingsModal').classList.remove('hidden');
 }
 function closeSettings() {
 document.getElementById('settingsModal').classList.add('hidden');
+}
+
+function loadConfigFile() {
+var input = document.createElement('input');
+input.type = 'file';
+input.accept = '.json';
+input.onchange = function(e) {
+var file = e.target.files[0];
+if (!file) return;
+var reader = new FileReader();
+reader.onload = function(ev) {
+try {
+var data = JSON.parse(ev.target.result);
+if (data.items && Array.isArray(data.items)) {
+if (confirm('将加载 ' + data.items.length + ' 条清单，导入到 localStorage？')) {
+items = data.items;
+saveItems();
+renderAll();
+alert('加载成功！');
+}
+} else {
+alert('无效的配置文件');
+}
+} catch(err) {
+alert('读取文件出错：' + err.message);
+}
+};
+reader.readAsText(file);
+};
+input.click();
 }
 
 function exportConfig() {
