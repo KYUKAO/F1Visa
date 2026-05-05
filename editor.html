@@ -47,7 +47,6 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
-  /* Nav: wrap buttons to next line, shrink title on very small screens */
   nav .flex.items-center.justify-between {
     flex-wrap: wrap !important;
     height: auto !important;
@@ -72,8 +71,6 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
   button[onclick="exportConfig()"] svg + span {
     display: none !important;
   }
-
-  /* Item cards: hide drag handle, compact layout */
   .sortable-item .drag-handle {
     display: none !important;
   }
@@ -87,7 +84,6 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
   .sortable-item select {
     font-size: 0.8rem !important;
   }
-  /* Item meta: name takes full width, original/qty on next row */
   .item-meta-row {
     flex-direction: column !important;
     align-items: flex-start !important;
@@ -96,16 +92,12 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
     width: 100% !important;
     min-width: unset !important;
   }
-
-  /* Modals: full-width with small margin */
   .modal-content {
     margin: 8px !important;
     max-width: calc(100vw - 16px) !important;
     padding: 16px !important;
     max-height: calc(100vh - 32px) !important;
   }
-
-  /* Case cards: reduce padding */
   .case-enter {
     padding: 12px !important;
   }
@@ -115,8 +107,6 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
   .case-enter .grid-cols-3 {
     grid-template-columns: 1fr !important;
   }
-
-  /* QA accordion: compact text */
   .bg-white.rounded-2xl.shadow-sm.overflow-hidden.mb-4 button {
     padding: 12px !important;
   }
@@ -191,7 +181,7 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
 <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
 </span>
 </div>
-<button onclick="addItem('required')" class="flex items-center gap-1 text-sm bg-rose-500 text-white px-3 py-1.5 rounded-lg hover:bg-rose-600 transition-colors font-semibold shadow-sm">
+<button onclick="openAddItemModal('required')" class="flex items-center gap-1 text-sm bg-rose-500 text-white px-3 py-1.5 rounded-lg hover:bg-rose-600 transition-colors font-semibold shadow-sm">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
 添加
 </button>
@@ -211,7 +201,7 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
 <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
 </span>
 </div>
-<button onclick="addItem('supporting')" class="flex items-center gap-1 text-sm bg-teal-500 text-white px-3 py-1.5 rounded-lg hover:bg-teal-600 transition-colors font-semibold shadow-sm">
+<button onclick="openAddItemModal('supporting')" class="flex items-center gap-1 text-sm bg-teal-500 text-white px-3 py-1.5 rounded-lg hover:bg-teal-600 transition-colors font-semibold shadow-sm">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
 添加
 </button>
@@ -565,13 +555,18 @@ Awards, Interests, Skills:
 </div>
 </div>
 
+<style>
+.toggle { position: relative; display: inline-block; width: 44px; height: 24px; border-radius: 12px; transition: background 0.2s; cursor: pointer; }
+.toggle-dot { position: absolute; top: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+</style>
+
 <script>
 // ===== DATA =====
 var items = [];
 var cases = [];
 var currentFilter = 'all';
 var newOriginal = false;
-var newAcquisition = '';
+var addItemDefaultCategory = 'required';
 var draggedItemId = null;
 
 // ===== INIT =====
@@ -597,7 +592,6 @@ items = JSON.parse(s);
 renderAll();
 return;
 }
-// Try fetch (async, modern)
 fetch('visa-config.json')
 .then(function(r) { return r.json(); })
 .then(function(data) {
@@ -611,7 +605,6 @@ renderAll();
 }
 })
 .catch(function() {
-// Try XHR sync fallback (for some local server setups)
 var xhr = new XMLHttpRequest();
 xhr.open('GET', 'visa-config.json', false);
 xhr.send(null);
@@ -637,7 +630,6 @@ if (s) {
 cases = JSON.parse(s);
 return;
 }
-// Try fetch
 fetch('visa-config.json')
 .then(function(r) { return r.json(); })
 .then(function(data) {
@@ -647,7 +639,6 @@ saveCases();
 }
 })
 .catch(function() {
-// Try XHR sync fallback
 var xhr = new XMLHttpRequest();
 xhr.open('GET', 'visa-config.json', false);
 xhr.send(null);
@@ -680,9 +671,8 @@ renderCases();
 function renderRequired() {
 var col = document.getElementById('required-col');
 var required = items.filter(function(it) { return it.category === 'required'; });
-
 if (required.length === 0) {
-col.innerHTML = '<p class="text-center text-gray-400 text-sm py-12" id="required-empty">拖动条目到此处切换分类</p>';
+col.innerHTML = '<p class="text-center text-gray-300 text-sm py-12" id="required-empty">暂无必备清单</p>';
 return;
 }
 col.innerHTML = '';
@@ -694,9 +684,8 @@ col.appendChild(createItemCard(it));
 function renderSupporting() {
 var col = document.getElementById('supporting-col');
 var supporting = items.filter(function(it) { return it.category === 'supporting'; });
-
 if (supporting.length === 0) {
-col.innerHTML = '<p class="text-center text-gray-400 text-sm py-12" id="supporting-empty">拖动条目到此处切换分类</p>';
+col.innerHTML = '<p class="text-center text-gray-300 text-sm py-12" id="supporting-empty">暂无辅助材料</p>';
 return;
 }
 col.innerHTML = '';
@@ -749,7 +738,6 @@ div.innerHTML =
 '</button>' +
 '</div>';
 
-// Drag events (on the handle, not the whole card)
 var handle = div.querySelector('.drag-handle');
 handle.addEventListener('dragstart', function(e) {
 draggedItemId = it.id;
@@ -765,20 +753,9 @@ document.querySelectorAll('.drag-over').forEach(function(el) { el.classList.remo
 return div;
 }
 
-function openFileLocation(id) {
-var it = items.find(function(item) { return item.id === id; });
-if (!it || !it.filePath) return;
-var fullPath = it.filePath.replace(/\\/g, '/');
-var dir = fullPath.substring(0, fullPath.lastIndexOf('/') + 1);
-var folderUrl = 'file:///' + (dir.startsWith('docs/') || dir.startsWith('docs\\') ? 'D:/VibeCoding/F1/' + dir : dir);
-window.location.href = folderUrl;
-}
-
 function updateItem(id, field, value) {
 items.forEach(function(it) {
-if (it.id === id) {
-it[field] = value;
-}
+if (it.id === id) { it[field] = value; }
 });
 saveItems();
 renderAll();
@@ -786,19 +763,7 @@ renderAll();
 
 function toggleReady(id) {
 items.forEach(function(it) {
-if (it.id === id) {
-it.isReady = !it.isReady;
-}
-});
-saveItems();
-renderAll();
-}
-
-function toggleOriginal(id) {
-items.forEach(function(it) {
-if (it.id === id) {
-it.isOriginal = !it.isOriginal;
-}
+if (it.id === id) { it.isReady = !it.isReady; }
 });
 saveItems();
 renderAll();
@@ -811,22 +776,6 @@ saveItems();
 renderAll();
 }
 
-function addItem(category) {
-var name = prompt('Item name:');
-if (!name || !name.trim()) return;
-items.push({
-id: uid(),
-name: name.trim(),
-category: category,
-isOriginal: false,
-quantity: 1,
-filePath: '',
-isReady: false
-});
-saveItems();
-renderAll();
-}
-
 // ===== DRAG & DROP =====
 var _dragOverCardId = null;
 var _insertBefore = false;
@@ -834,23 +783,19 @@ var _insertBefore = false;
 function onDragOver(e) {
 e.preventDefault();
 e.dataTransfer.dropEffect = 'move';
-// Remove old insert indicators
 document.querySelectorAll('.drag-insert-indicator').forEach(function(el) { el.remove(); });
 document.querySelectorAll('.drag-over-card').forEach(function(el) { el.classList.remove('drag-over-card'); });
 
-// Find which card we're over (not the dragged one)
 var target = e.target.closest('.sortable-item');
 if (!target || target.id === 'item-' + draggedItemId) {
 _dragOverCardId = null;
 return;
 }
 _dragOverCardId = target.getAttribute('data-id');
-// Insert before if mouse is in top half of card
 var rect = target.getBoundingClientRect();
 _insertBefore = e.clientY < rect.top + rect.height / 2;
 target.classList.add('drag-over-card');
 
-// Show insert indicator
 var indicator = document.createElement('div');
 indicator.className = 'drag-insert-indicator';
 indicator.style.cssText = 'height:3px;background:#6366f1;border-radius:2px;margin:4px 0;transition:all 0.1s;';
@@ -881,29 +826,22 @@ var draggedItem = items.find(function(it) { return it.id === draggedItemId; });
 if (!draggedItem) return;
 
 var srcCategory = draggedItem.category;
-
-// Remove from array
 items = items.filter(function(it) { return it.id !== draggedItemId; });
 
 if (srcCategory === targetCategory) {
-// Same column: reorder at correct position
 var colItems = items.filter(function(it) { return it.category === targetCategory; });
 var otherItems = items.filter(function(it) { return it.category !== targetCategory; });
 
 if (_dragOverCardId) {
 var insertIdx = colItems.findIndex(function(it) { return it.id === _dragOverCardId; });
 if (insertIdx === -1) insertIdx = colItems.length;
-if (_insertBefore) {
-colItems.splice(insertIdx, 0, draggedItem);
-} else {
-colItems.splice(insertIdx + 1, 0, draggedItem);
-}
+if (_insertBefore) { colItems.splice(insertIdx, 0, draggedItem); }
+else { colItems.splice(insertIdx + 1, 0, draggedItem); }
 } else {
 colItems.push(draggedItem);
 }
 items = otherItems.concat(colItems);
 } else {
-// Different column: change category
 draggedItem.category = targetCategory;
 var colItems = items.filter(function(it) { return it.category === targetCategory; });
 var otherItems = items.filter(function(it) { return it.category !== targetCategory; });
@@ -911,11 +849,8 @@ var otherItems = items.filter(function(it) { return it.category !== targetCatego
 if (_dragOverCardId) {
 var insertIdx = colItems.findIndex(function(it) { return it.id === _dragOverCardId; });
 if (insertIdx === -1) insertIdx = colItems.length;
-if (_insertBefore) {
-colItems.splice(insertIdx, 0, draggedItem);
-} else {
-colItems.splice(insertIdx + 1, 0, draggedItem);
-}
+if (_insertBefore) { colItems.splice(insertIdx, 0, draggedItem); }
+else { colItems.splice(insertIdx + 1, 0, draggedItem); }
 } else {
 colItems.push(draggedItem);
 }
@@ -933,10 +868,10 @@ document.getElementById('page-cases').className = tab === 'cases' ? 'block' : 'h
 document.getElementById('page-qa').className = tab === 'qa' ? 'block' : 'hidden';
 document.getElementById('page-templates').className = tab === 'templates' ? 'block' : 'hidden';
 
-document.getElementById('btn-checklist').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-medium ' + (tab === 'checklist' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200');
-document.getElementById('btn-cases').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-medium ' + (tab === 'cases' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200');
-document.getElementById('btn-qa').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-medium ' + (tab === 'qa' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200');
-document.getElementById('btn-templates').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-medium ' + (tab === 'templates' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200');
+document.getElementById('btn-checklist').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-semibold ' + (tab === 'checklist' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm');
+document.getElementById('btn-cases').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-semibold ' + (tab === 'cases' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm');
+document.getElementById('btn-qa').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-semibold ' + (tab === 'qa' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm');
+document.getElementById('btn-templates').className = 'nav-btn px-4 py-2 rounded-lg text-sm font-semibold ' + (tab === 'templates' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white text-blue-700 border border-blue-300 hover:bg-blue-50 shadow-sm');
 }
 
 // ===== Q&A =====
@@ -978,15 +913,13 @@ section.innerHTML =
 '<div id="qa-content-' + gi + '" class="hidden border-t border-gray-100 p-4">' +
 '<div class="space-y-2">' +
 group.questions.map(function(q) {
-return '<div class="flex items-start gap-2 p-2 bg-gray-50 rounded-lg"><span class="text-indigo-400 mt-0.5">Q:</span><span class="text-sm text-gray-700">' + q + '</span></div>';
+return '<div class="flex items-start gap-2 p-2 bg-gray-50 rounded-lg"><span class="text-indigo-400 mt-0.5">Q:</span><span class="text-sm text-gray-700">' + escHtml(q) + '</span></div>';
 }).join('') +
 '</div>' +
 '</div>';
 container.appendChild(section);
 });
 }
-
-window.toggleQaStates = {};
 
 function toggleQA(idx) {
 var content = document.getElementById('qa-content-' + idx);
@@ -1026,7 +959,7 @@ rejected.forEach(function(c, i) { rejectedList.appendChild(createCaseCard(c, i))
 }
 
 function createCaseCard(c, idx) {
-var isApproved = c.result === 'approved';
+var isApproved = c.status === 'approved';
 var cardBorder = isApproved ? 'border-l-4 border-l-green-500' : 'border-l-4 border-l-red-500';
 var badgeClass = isApproved ? 'bg-green-100 text-green-800 border-green-300' : 'bg-red-100 text-red-700 border-red-300';
 var badgeText = isApproved ? '通过' : '拒签';
@@ -1035,23 +968,23 @@ div.className = 'bg-white rounded-2xl shadow-sm p-5 case-enter border border-gra
 div.innerHTML =
 '<div class="flex items-start justify-between mb-3">' +
 '<div>' +
-'<span class="text-xs text-gray-500 font-medium">' + c.date + '</span>' +
-'<span class="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full font-bold border border-green-300">' + badgeText + '</span>' +
+'<span class="text-xs text-gray-500 font-medium">' + escHtml(c.date) + '</span>' +
+'<span class="ml-2 text-xs px-2 py-0.5 rounded-full font-bold border ' + badgeClass + '">' + badgeText + '</span>' +
 '</div>' +
 '<button onclick="deleteCase(' + idx + ')" class="text-gray-300 hover:text-red-500"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>' +
 '</div>' +
 '<div class="grid grid-cols-3 gap-2 mb-3 text-sm">' +
-(c.window ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">领事馆</span><p class="font-semibold text-gray-800">' + c.window + '</p></div>' : '') +
-(c.vo ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">VO</span><p class="font-semibold text-gray-800">' + c.vo + '</p></div>' : '') +
-(c.duration ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">时长</span><p class="font-semibold text-gray-800">' + c.duration + '</p></div>' : '') +
+(c.window ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">领事馆</span><p class="font-semibold text-gray-800">' + escHtml(c.window) + '</p></div>' : '') +
+(c.vo ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">VO</span><p class="font-semibold text-gray-800">' + escHtml(c.vo) + '</p></div>' : '') +
+(c.duration ? '<div class="bg-gray-50 rounded-lg p-2"><span class="text-gray-400 text-xs">时长</span><p class="font-semibold text-gray-800">' + escHtml(c.duration) + '</p></div>' : '') +
 '</div>' +
-(c.prep ? '<div class="mb-2"><span class="text-sm font-bold text-rose-600">准备:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + c.prep + '</p></div>' : '') +
-(c.used ? '<div class="mb-2"><span class="text-sm font-bold text-green-600">用到:</span><p class="text-sm text-gray-700 mt-0.5 font-medium leading-relaxed">' + c.used + '</p></div>' : '') +
-(c.unused ? '<div class="mb-2"><span class="text-sm font-bold text-gray-400">没用:</span><p class="text-sm text-gray-500 mt-0.5 leading-relaxed">' + c.unused + '</p></div>' : '') +
-(c.timeline ? '<div class="mb-2"><span class="text-sm font-bold text-purple-600">时间线:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + c.timeline + '</p></div>' : '') +
-(c.process ? '<div class="mb-2"><span class="text-sm font-bold text-orange-600">过程:</span><p class="text-sm text-gray-700 mt-0.5 whitespace-pre-wrap leading-relaxed">' + c.process + '</p></div>' : '') +
-(c.result ? '<div class="mb-2"><span class="text-sm font-bold text-indigo-600">结果:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + c.result + '</p></div>' : '') +
-(c.tips ? '<div class="bg-amber-50 rounded-lg p-3 mt-2 border border-amber-200"><span class="text-sm font-bold text-amber-700">贴士:</span><p class="text-sm text-amber-800 mt-0.5 leading-relaxed">' + c.tips + '</p></div>' : '');
+(c.prep ? '<div class="mb-2"><span class="text-sm font-bold text-rose-600">准备:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + escHtml(c.prep) + '</p></div>' : '') +
+(c.used ? '<div class="mb-2"><span class="text-sm font-bold text-green-600">用到:</span><p class="text-sm text-gray-700 mt-0.5 font-medium leading-relaxed">' + escHtml(c.used) + '</p></div>' : '') +
+(c.unused ? '<div class="mb-2"><span class="text-sm font-bold text-gray-400">没用:</span><p class="text-sm text-gray-500 mt-0.5 leading-relaxed">' + escHtml(c.unused) + '</p></div>' : '') +
+(c.timeline ? '<div class="mb-2"><span class="text-sm font-bold text-purple-600">时间线:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + escHtml(c.timeline) + '</p></div>' : '') +
+(c.process ? '<div class="mb-2"><span class="text-sm font-bold text-orange-600">过程:</span><p class="text-sm text-gray-700 mt-0.5 whitespace-pre-wrap leading-relaxed">' + escHtml(c.process) + '</p></div>' : '') +
+(c.result ? '<div class="mb-2"><span class="text-sm font-bold text-indigo-600">结果:</span><p class="text-sm text-gray-700 mt-0.5 leading-relaxed">' + escHtml(c.result) + '</p></div>' : '') +
+(c.tips ? '<div class="bg-amber-50 rounded-lg p-3 mt-2 border border-amber-200"><span class="text-sm font-bold text-amber-700">贴士:</span><p class="text-sm text-amber-800 mt-0.5 leading-relaxed">' + escHtml(c.tips) + '</p></div>' : '');
 return div;
 }
 
@@ -1104,9 +1037,7 @@ cases.push({status, date, window, vo, duration, prep, used, unused, timeline, pr
 saveCases();
 renderCases();
 closeAddCase();
-closeAddCase(); // double close to ensure
 
-// Clear fields
 ['case-window','case-vo','case-duration','case-prep','case-used','case-unused','case-timeline','case-process','case-result','case-tips'].forEach(function(id) {
 document.getElementById(id).value = '';
 });
@@ -1224,10 +1155,16 @@ reader.readAsText(file);
 }
 
 // ===== ADD ITEM MODAL =====
+function openAddItemModal(category) {
+addItemDefaultCategory = category;
+document.getElementById('new-item-category').value = category;
+document.getElementById('addItemModal').classList.remove('hidden');
+}
+
 function toggleNewOriginal() {
 newOriginal = !newOriginal;
 var toggle = document.getElementById('new-item-original');
-toggle.className = 'toggle ' + (newOriginal ? 'bg-red-500' : 'bg-gray-200');
+toggle.className = 'toggle ' + (newOriginal ? 'bg-red-500' : 'bg-gray-300');
 toggle.querySelector('.toggle-dot').style.left = newOriginal ? '22px' : '2px';
 }
 
@@ -1235,7 +1172,7 @@ function closeAddItem() {
 document.getElementById('addItemModal').classList.add('hidden');
 newOriginal = false;
 var t = document.getElementById('new-item-original');
-t.className = 'toggle bg-gray-200';
+t.className = 'toggle bg-gray-300';
 t.querySelector('.toggle-dot').style.left = '2px';
 document.getElementById('new-item-name').value = '';
 document.getElementById('new-item-category').value = 'required';
@@ -1270,45 +1207,38 @@ closeAddItem();
 // ===== FILE PICKER =====
 var _pickerItemId = null;
 document.getElementById('filePicker').addEventListener('change', function(e) {
-  var file = e.target.files[0];
-  if (file && _pickerItemId) {
-    var name = file.name;
-    // webkitRelativePath gives path relative to the selected folder, e.g. "images/photo.jpg"
-    var rel = file.webkitRelativePath || '';
-    var guess;
-    if (rel && rel !== name) {
-      // User picked a folder first; use the relative path as-is
-      guess = rel;
-    } else {
-      // Single file picked directly
-      guess = 'docs/';
-      if (name.match(/\.(pdf|doc|docx)$/i)) guess += 'documents/' + name;
-      else if (name.match(/\.(jpg|jpeg|png)$/i)) guess += 'images/' + name;
-      else guess += name;
-    }
-    updateItem(_pickerItemId, 'filePath', guess);
-  }
-  _pickerItemId = null;
-  e.target.value = '';
+var file = e.target.files[0];
+if (file && _pickerItemId) {
+var name = file.name;
+var rel = file.webkitRelativePath || '';
+var guess;
+if (rel && rel !== name) {
+guess = rel;
+} else {
+guess = 'docs/';
+if (name.match(/\.(pdf|doc|docx)$/i)) guess += 'documents/' + name;
+else if (name.match(/\.(jpg|jpeg|png)$/i)) guess += 'images/' + name;
+else guess += name;
+}
+updateItem(_pickerItemId, 'filePath', guess);
+}
+_pickerItemId = null;
+e.target.value = '';
 });
 
 function pickFilePath(itemId) {
-  _pickerItemId = itemId;
-  document.getElementById('filePicker').click();
+_pickerItemId = itemId;
+document.getElementById('filePicker').click();
 }
 
 function showFilePickerHint() {
-  alert('请在清单条目内点击"选择文件"按钮来设置该条目的文件路径。');
+alert('请在清单条目内点击"选择文件"按钮来设置该条目的文件路径。');
 }
 
 // ===== UTILS =====
 function escHtml(s) {
 if (!s) return '';
 return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function toggleLegend(el) {
-// No-op, just visual feedback
 }
 
 // ===== START =====
