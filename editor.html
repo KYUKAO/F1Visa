@@ -152,62 +152,118 @@ input[type="checkbox"]:focus { outline: none; box-shadow: 0 0 0 3px #3b82f6; }
 <div class="flex flex-col gap-6">
 
 <!-- 图例 -->
-<div class="flex flex-wrap items-center gap-4 text-xs font-semibold text-gray-600 bg-gray-50 rounded-xl px-4 py-2 border border-gray-200">
-<span class="font-bold text-gray-800 mr-1">图例:</span>
-<input type="checkbox" checked disabled class="w-4 h-4 rounded border-2 border-gray-300 accent-blue-600">
-<span>已准备</span>
-<span class="text-gray-300">|</span>
-<div class="flex items-center gap-1">
-<div class="w-5 h-5 bg-rose-100 text-rose-700 rounded text-xs flex items-center justify-center font-bold border border-rose-300">原</div>
-<span>原件</span>
-</div>
-<span class="text-gray-300">|</span>
-<div class="flex items-center gap-1">
-<div class="w-5 h-5 bg-gray-100 text-gray-500 rounded text-xs flex items-center justify-center border border-gray-300">印</div>
-<span>复印件</span>
-</div>
-<span class="text-gray-300">|</span>
+<div class="flex flex-wrap items-center gap-3 text-xs font-semibold text-gray-600 bg-gray-50 rounded-xl px-4 py-2 border border-gray-200">
+<span class="font-bold text-gray-800 mr-1">材料类型:</span>
+<div class="flex items-center gap-1"><div class="w-5 h-5 bg-green-100 text-green-700 rounded text-xs flex items-center justify-center font-bold border border-green-300">原</div><span>原件</span></div>
+<div class="flex items-center gap-1"><div class="w-5 h-5 bg-sky-100 text-sky-700 rounded text-xs flex items-center justify-center font-bold border border-sky-300">照</div><span>实体照片</span></div>
+<div class="flex items-center gap-1"><div class="w-5 h-5 bg-blue-100 text-blue-700 rounded text-xs flex items-center justify-center font-bold border border-blue-300">打</div><span>打印件</span></div>
+<div class="flex items-center gap-1"><div class="w-5 h-5 bg-gray-100 text-gray-500 rounded text-xs flex items-center justify-center font-bold border border-gray-300">印</div><span>复印件</span></div>
+<div class="flex items-center gap-1"><div class="w-5 h-5 bg-orange-100 text-orange-700 rounded text-xs flex items-center justify-center font-bold border border-orange-300">章</div><span>盖章原件</span></div>
+<div class="flex items-center gap-1"><input type="checkbox" checked disabled class="w-4 h-4 rounded border-2 border-gray-300 accent-blue-600"><span>已准备</span></div>
 <button onclick="showFilePickerHint()" class="shrink-0 text-xs text-blue-600 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded hover:bg-blue-100 transition-colors">选择文件</button>
-<span>选择本地文件路径（点条目内的按钮）</span>
 </div>
 
-<!-- 必备清单 -->
+<!-- 核心携带清单 -->
 <div>
 <div class="flex items-center justify-between mb-3">
 <div class="flex items-center gap-2">
 <div class="w-3 h-3 rounded-full bg-rose-500"></div>
-<h2 class="text-lg font-bold text-rose-800">必备清单</h2>
-<span class="relative group cursor-help" title="面签时必须携带的材料，无则必拒">
-<svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-</span>
+<h2 class="text-lg font-bold text-rose-800">核心携带清单</h2>
 </div>
-<button onclick="openAddItemModal('required')" class="flex items-center gap-1 text-sm bg-rose-500 text-white px-3 py-1.5 rounded-lg hover:bg-rose-600 transition-colors font-semibold shadow-sm">
+<button onclick="openAddItemModal('core')" class="flex items-center gap-1 text-sm bg-rose-500 text-white px-3 py-1.5 rounded-lg hover:bg-rose-600 transition-colors font-semibold shadow-sm">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
 添加
 </button>
 </div>
-<div id="required-col" class="space-y-3 min-h-[300px] bg-white rounded-2xl p-4 border-2 border-rose-200 transition-all" ondragover="onDragOver(event)" ondrop="onDrop(event,'required')" ondragleave="onDragLeave(event)">
-<p class="text-center text-rose-300 text-sm py-12" id="required-empty">拖动条目到此处切换分类</p>
+<div id="col-core" class="space-y-3 min-h-[100px] bg-white rounded-2xl p-4 border-2 border-rose-200 transition-all" ondragover="onDragOver(event)" ondrop="onDrop(event,'core')" ondragleave="onDragLeave(event)">
+<p class="text-center text-rose-300 text-sm py-8" id="core-empty">拖动条目到此处切换分类</p>
 </div>
 </div>
 
-<!-- 辅助材料 -->
+<!-- 7 categories stacked vertically -->
+<div class="space-y-4">
+
+<!-- 身份与入场辅助 -->
 <div>
-<div class="flex items-center justify-between mb-3">
-<div class="flex items-center gap-2">
-<div class="w-3 h-3 rounded-full bg-teal-500"></div>
-<h2 class="text-lg font-bold text-teal-800">辅助材料</h2>
-<span class="relative group cursor-help" title="有助于增强说服力的补充材料，提高通过率">
-<svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-</span>
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-gray-500"></div>
+<h3 class="text-sm font-bold text-gray-700">身份与入场辅助</h3>
+<button onclick="openAddItemModal('core-identity')" class="ml-auto text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded hover:bg-gray-300">+</button>
 </div>
-<button onclick="openAddItemModal('supporting')" class="flex items-center gap-1 text-sm bg-teal-500 text-white px-3 py-1.5 rounded-lg hover:bg-teal-600 transition-colors font-semibold shadow-sm">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-添加
-</button>
+<div id="col-identity" class="space-y-2 bg-gray-50 rounded-xl p-3 border border-gray-200 min-h-[60px]" ondragover="onDragOver(event)" ondrop="onDrop(event,'core-identity')" ondragleave="onDragLeave(event)">
+<p class="text-center text-gray-300 text-xs py-4">暂无</p>
 </div>
-<div id="supporting-col" class="space-y-3 min-h-[300px] bg-white rounded-2xl p-4 border-2 border-teal-200 transition-all" ondragover="onDragOver(event)" ondrop="onDrop(event,'supporting')" ondragleave="onDragLeave(event)">
-<p class="text-center text-teal-300 text-sm py-12" id="supporting-empty">拖动条目到此处切换分类</p>
+</div>
+
+<!-- 学校与签证文件 -->
+<div>
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-blue-500"></div>
+<h3 class="text-sm font-bold text-blue-700">学校与签证文件</h3>
+<button onclick="openAddItemModal('core-school-visa')" class="ml-auto text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded hover:bg-blue-200">+</button>
+</div>
+<div id="col-school-visa" class="space-y-2 bg-blue-50 rounded-xl p-3 border border-blue-200 min-h-[60px]" ondragover="onDragOver(event)" ondrop="onDrop(event,'core-school-visa')" ondragleave="onDragLeave(event)">
+<p class="text-center text-blue-300 text-xs py-4">暂无</p>
+</div>
+</div>
+
+<!-- 学历与学术材料 -->
+<div>
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-purple-500"></div>
+<h3 class="text-sm font-bold text-purple-700">学历与学术材料</h3>
+<button onclick="openAddItemModal('core-academic')" class="ml-auto text-xs bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded hover:bg-purple-200">+</button>
+</div>
+<div id="col-academic" class="space-y-2 bg-purple-50 rounded-xl p-3 border border-purple-200 min-h-[60px]" ondragover="onDragOver(event)" ondrop="onDrop(event,'core-academic')" ondragleave="onDragLeave(event)">
+<p class="text-center text-purple-300 text-xs py-4">暂无</p>
+</div>
+</div>
+
+<!-- 资金与资助材料 -->
+<div>
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<h3 class="text-sm font-bold text-green-700">资金与资助材料</h3>
+<button onclick="openAddItemModal('core-funding')" class="ml-auto text-xs bg-green-100 text-green-600 px-1.5 py-0.5 rounded hover:bg-green-200">+</button>
+</div>
+<div id="col-funding" class="space-y-2 bg-green-50 rounded-xl p-3 border border-green-200 min-h-[60px]" ondragover="onDragOver(event)" ondrop="onDrop(event,'core-funding')" ondragleave="onDragLeave(event)">
+<p class="text-center text-green-300 text-xs py-4">暂无</p>
+</div>
+</div>
+
+<!-- 研究/专业解释材料 -->
+<div>
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-orange-500"></div>
+<h3 class="text-sm font-bold text-orange-700">研究/专业解释材料</h3>
+<button onclick="openAddItemModal('core-research')" class="ml-auto text-xs bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded hover:bg-orange-200">+</button>
+</div>
+<div id="col-research" class="space-y-2 bg-orange-50 rounded-xl p-3 border border-orange-200 min-h-[60px]" ondragover="onDragOver(event)" ondrop="onDrop(event,'core-research')" ondragleave="onDragLeave(event)">
+<p class="text-center text-orange-300 text-xs py-4">暂无</p>
+</div>
+</div>
+
+<!-- 工作与 Gap 解释材料 -->
+<div>
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-amber-500"></div>
+<h3 class="text-sm font-bold text-amber-700">工作与 Gap 解释材料</h3>
+<button onclick="openAddItemModal('core-work-gap')" class="ml-auto text-xs bg-amber-100 text-amber-600 px-1.5 py-0.5 rounded hover:bg-amber-200">+</button>
+</div>
+<div id="col-work-gap" class="space-y-2 bg-amber-50 rounded-xl p-3 border border-amber-200 min-h-[60px]" ondragover="onDragOver(event)" ondrop="onDrop(event,'core-work-gap')" ondragleave="onDragLeave(event)">
+<p class="text-center text-amber-300 text-xs py-4">暂无</p>
+</div>
+</div>
+
+<!-- 现场辅助 -->
+<div>
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-slate-400"></div>
+<h3 class="text-sm font-bold text-slate-600">现场辅助</h3>
+<button onclick="openAddItemModal('core-onsite')" class="ml-auto text-xs bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded hover:bg-slate-200">+</button>
+</div>
+<div id="col-onsite" class="space-y-2 bg-slate-50 rounded-xl p-3 border border-slate-200 min-h-[60px]" ondragover="onDragOver(event)" ondrop="onDrop(event,'core-onsite')" ondragleave="onDragLeave(event)">
+<p class="text-center text-slate-300 text-xs py-4">暂无</p>
 </div>
 </div>
 
@@ -401,22 +457,29 @@ Awards, Interests, Skills:
 <div>
 <label class="text-sm font-medium text-gray-700">分类</label>
 <select id="new-item-category" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
-<option value="required">必备</option>
-<option value="supporting">辅助材料</option>
+<option value="core">核心携带清单</option>
+<option value="core-identity">身份与入场辅助</option>
+<option value="core-school-visa">学校与签证文件</option>
+<option value="core-academic">学历与学术材料</option>
+<option value="core-funding">资金与资助材料</option>
+<option value="core-research">研究/专业解释材料</option>
+<option value="core-work-gap">工作与 Gap 解释材料</option>
+<option value="core-onsite">现场辅助</option>
+</select>
+</div>
+<div>
+<label class="text-sm font-medium text-gray-700">材料类型</label>
+<select id="new-item-docType" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
+<option value="原件">原件</option>
+<option value="实体照片">实体照片</option>
+<option value="打印件">打印件</option>
+<option value="复印件">复印件</option>
+<option value="盖章原件">盖章原件</option>
 </select>
 </div>
 <div>
 <label class="text-sm font-medium text-gray-700">获取要求/网址</label>
 <input id="new-item-acquisition" type="text" placeholder="要求页面或网址..." class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
-</div>
-<div>
-<label class="text-sm font-medium text-gray-700">数量</label>
-<input id="new-item-qty" type="number" value="1" min="1" class="w-full mt-1 px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 font-medium">
-</div>
-</div>
-<div class="flex items-center justify-between">
-<label class="text-sm font-semibold text-gray-700">是否原件？</label>
-<div id="new-item-original" class="toggle bg-gray-300" onclick="toggleNewOriginal()"><div class="toggle-dot" style="left:2px"></div></div>
 </div>
 <div>
 <label class="text-sm font-medium text-gray-700">说明（可选）</label>
@@ -663,94 +726,99 @@ return 'i' + Math.random().toString(36).substr(2, 9);
 
 // ===== RENDER =====
 function renderAll() {
-renderRequired();
-renderSupporting();
-renderCases();
+  renderCore();
+  renderCategory('col-identity', 'core-identity');
+  renderCategory('col-school-visa', 'core-school-visa');
+  renderCategory('col-academic', 'core-academic');
+  renderCategory('col-funding', 'core-funding');
+  renderCategory('col-research', 'core-research');
+  renderCategory('col-work-gap', 'core-work-gap');
+  renderCategory('col-onsite', 'core-onsite');
+  renderCases();
 }
 
-function renderRequired() {
-var col = document.getElementById('required-col');
-var required = items.filter(function(it) { return it.category === 'required'; });
-if (required.length === 0) {
-col.innerHTML = '<p class="text-center text-gray-300 text-sm py-12" id="required-empty">暂无必备清单</p>';
-return;
-}
-col.innerHTML = '';
-required.forEach(function(it) {
-col.appendChild(createItemCard(it));
-});
+function renderCore() {
+  var col = document.getElementById('col-core');
+  var coreItems = items.filter(function(it) { return it.category === 'core'; });
+  if (coreItems.length === 0) {
+    col.innerHTML = '<p class="text-center text-rose-300 text-sm py-8" id="core-empty">拖动条目到此处切换分类</p>';
+    return;
+  }
+  col.innerHTML = '';
+  coreItems.forEach(function(it) { col.appendChild(createItemCard(it)); });
 }
 
-function renderSupporting() {
-var col = document.getElementById('supporting-col');
-var supporting = items.filter(function(it) { return it.category === 'supporting'; });
-if (supporting.length === 0) {
-col.innerHTML = '<p class="text-center text-gray-300 text-sm py-12" id="supporting-empty">暂无辅助材料</p>';
-return;
-}
-col.innerHTML = '';
-supporting.forEach(function(it) {
-col.appendChild(createItemCard(it));
-});
+function renderCategory(colId, filterCat) {
+  var col = document.getElementById(colId);
+  var filtered = items.filter(function(it) { return it.category === filterCat; });
+  if (filtered.length === 0) {
+    col.innerHTML = '<p class="text-center text-gray-300 text-xs py-6">暂无</p>';
+    return;
+  }
+  col.innerHTML = '';
+  filtered.forEach(function(it) { col.appendChild(createItemCard(it, true)); });
 }
 
-function createItemCard(it) {
-var catBorder = it.category === 'required' ? 'border-amber-400' : 'border-blue-400';
-var catBg     = it.category === 'required' ? 'bg-amber-50' : 'bg-blue-50';
-var originalBg   = it.isOriginal ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500';
-var originalText  = it.isOriginal ? '原件' : '复印件';
+function createItemCard(it, compact) {
+  var docTypeStyles = {
+    '原件': 'bg-green-100 text-green-700 border border-green-300',
+    '实体照片': 'bg-sky-100 text-sky-700 border border-sky-300',
+    '打印件': 'bg-blue-100 text-blue-700 border border-blue-300',
+    '复印件': 'bg-gray-100 text-gray-500 border border-gray-300',
+    '盖章原件': 'bg-orange-100 text-orange-700 border border-orange-300'
+  };
+  var dtLabel = it.docType || '原件';
+  var dtStyle = docTypeStyles[dtLabel] || 'bg-gray-100 text-gray-600 border border-gray-300';
 
-var div = document.createElement('div');
-div.className = 'item-card sortable-item bg-white rounded-xl p-4 shadow-sm';
-div.id = 'item-' + it.id;
-div.setAttribute('data-id', it.id);
+  var div = document.createElement('div');
+  div.className = 'item-card sortable-item bg-white rounded-lg p-2 shadow-sm';
+  div.id = 'item-' + it.id;
+  div.setAttribute('data-id', it.id);
 
-div.innerHTML =
-'<div class="flex items-start gap-2 border-l-4 ' + catBorder + ' ' + catBg + ' rounded-r-xl px-4 py-3">' +
-'<div class="flex flex-col items-center gap-2 pt-1 shrink-0">' +
-'<div class="drag-handle text-gray-300 hover:text-gray-500 cursor-grab" title="拖动排序" draggable="true">:::</div>' +
-'<input type="checkbox" ' + (it.isReady ? 'checked' : '') + ' onchange="toggleReady(\'' + it.id + '\')" class="w-5 h-5 rounded border-2 border-gray-300 accent-blue-600 cursor-pointer">' +
-'</div>' +
-'<div class="flex-1 min-w-0 space-y-1">' +
-'<div class="item-meta-row">' +
-'<input type="text" value="' + escHtml(it.name) + '" onchange="updateItem(\'' + it.id + '\',\'name\',this.value)" class="item-name-input font-bold text-gray-900 bg-transparent border-0 text-base px-1 py-0.5 w-auto min-w-[120px] max-w-[300px] hover:bg-white focus:bg-white rounded">' +
-'<select onchange="updateItem(\'' + it.id + '\',\'isOriginal\',this.value===\'true\')" class="shrink-0 text-xs px-1.5 py-0.5 rounded font-bold border-0 cursor-pointer ' + originalBg + '">' +
-'<option value="true" ' + (it.isOriginal ? 'selected' : '') + '>原件</option>' +
-'<option value="false" ' + (!it.isOriginal ? 'selected' : '') + '>复印件</option>' +
-'</select>' +
-'<input type="number" value="' + it.quantity + '" min="1" max="99" onchange="updateItem(\'' + it.id + '\',\'quantity\',parseInt(this.value)||1)" class="shrink-0 text-xs w-12 px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 border-0 text-center hover:bg-white focus:bg-white">' +
-'</div>' +
-'<div class="flex items-center gap-2">' +
-'<span class="text-xs text-gray-400 shrink-0">文件路径</span>' +
-'<div class="flex-1 flex items-center gap-1.5 min-w-0">' +
-'<input type="text" value="' + escHtml(it.filePath) + '" onchange="updateItem(\'' + it.id + '\',\'filePath\',this.value)" placeholder="docs/..." class="flex-1 text-xs text-blue-600 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded hover:bg-white focus:bg-white focus:border-blue-400 w-full min-w-0" spellcheck="false">' +
-'<button onclick="pickFilePath(\'' + it.id + '\')" class="shrink-0 text-xs text-blue-600 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded hover:bg-blue-100 transition-colors" title="选择本地文件或文件夹">选择文件</button>' +
-'</div>' +
-'</div>' +
-'<div class="flex items-center gap-2">' +
-'<span class="text-xs text-gray-400 shrink-0">要求来源网站</span>' +
-'<input type="text" value="' + escHtml(it.acquisition) + '" onchange="updateItem(\'' + it.id + '\',\'acquisition\',this.value)" placeholder="获取方式/来源" class="flex-1 text-xs text-gray-500 bg-transparent border-0 px-1 py-0.5 hover:bg-white focus:bg-white rounded w-full">' +
-'</div>' +
-(it.description ? '<p class="text-xs text-gray-600 leading-relaxed px-1">' + escHtml(it.description) + '</p>' : '') +
-'</div>' +
-'<button onclick="deleteItem(\'' + it.id + '\')" class="shrink-0 text-gray-300 hover:text-red-500 transition-colors p-1 mt-1" title="删除">' +
-'<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' +
-'</button>' +
-'</div>';
+  div.innerHTML =
+  '<div class="flex items-start gap-1.5">' +
+  '<div class="drag-handle text-gray-300 hover:text-gray-500 cursor-grab shrink-0 text-xs pt-0.5" title="拖动排序" draggable="true">:::</div>' +
+  '<input type="checkbox" ' + (it.isReady ? 'checked' : '') + ' onchange="toggleReady(\'' + it.id + '\')" class="w-3.5 h-3.5 mt-0.5 rounded border border-gray-300 accent-blue-600 shrink-0 cursor-pointer">' +
+  '<div class="flex-1 min-w-0">' +
+  '<div class="flex items-center gap-2 flex-wrap">' +
+  '<input type="text" value="' + escHtml(it.name) + '" onchange="updateItem(\'' + it.id + '\',\'name\',this.value)" class="text-sm font-bold text-gray-900 bg-transparent border-0 px-1 py-0.5 hover:bg-white focus:bg-white rounded max-w-[200px]">' +
+  '<select onchange="updateItem(\'' + it.id + '\',\'docType\',this.value)" class="shrink-0 text-[10px] px-1 py-0.5 rounded font-bold cursor-pointer ' + dtStyle + '">' +
+  '<option value="原件"' + (dtLabel==='原件'?' selected':'') + '>原件</option>' +
+  '<option value="实体照片"' + (dtLabel==='实体照片'?' selected':'') + '>实体照片</option>' +
+  '<option value="打印件"' + (dtLabel==='打印件'?' selected':'') + '>打印件</option>' +
+  '<option value="复印件"' + (dtLabel==='复印件'?' selected':'') + '>复印件</option>' +
+  '<option value="盖章原件"' + (dtLabel==='盖章原件'?' selected':'') + '>盖章原件</option>' +
+  '</select>' +
+  '<input type="number" value="' + it.quantity + '" min="1" max="99" onchange="updateItem(\'' + it.id + '\',\'quantity\',parseInt(this.value)||1)" class="shrink-0 text-[10px] w-8 px-1 py-0.5 rounded bg-gray-100 text-gray-500 border-0 text-center hover:bg-white focus:bg-white">' +
+  '</div>' +
+  '<div class="flex items-center gap-1 mt-0.5 min-w-0">' +
+  '<span class="text-[10px] text-gray-400 shrink-0">档</span>' +
+  '<div class="flex-1 flex items-center gap-1 min-w-0">' +
+  '<input type="text" value="' + escHtml(it.filePath) + '" onchange="updateItem(\'' + it.id + '\',\'filePath\',this.value)" placeholder="docs/..." class="flex-1 text-[10px] text-blue-600 bg-blue-50 border border-blue-200 px-1 py-0.5 rounded hover:bg-white focus:bg-white focus:border-blue-400 w-full min-w-0" spellcheck="false">' +
+  '<button onclick="pickFilePath(\'' + it.id + '\')" class="shrink-0 text-[10px] text-blue-600 bg-blue-50 border border-blue-200 px-1 py-0.5 rounded hover:bg-blue-100" title="选择文件">选</button>' +
+  '</div>' +
+  '</div>' +
+  '<div class="flex items-center gap-1 mt-0.5 min-w-0">' +
+  '<span class="text-[10px] text-gray-400 shrink-0">源</span>' +
+  '<input type="text" value="' + escHtml(it.acquisition) + '" onchange="updateItem(\'' + it.id + '\',\'acquisition\',this.value)" placeholder="获取来源/网址" class="flex-1 text-[10px] text-gray-500 bg-transparent border-0 px-1 py-0.5 hover:bg-white focus:bg-white rounded w-full">' +
+  '</div>' +
+  '</div>' +
+  '<button onclick="deleteItem(\'' + it.id + '\')" class="shrink-0 text-gray-300 hover:text-red-500 transition-colors p-0.5 mt-0.5" title="删除">' +
+  '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>' +
+  '</button>' +
+  '</div>';
 
-var handle = div.querySelector('.drag-handle');
-handle.addEventListener('dragstart', function(e) {
-draggedItemId = it.id;
-div.classList.add('dragging');
-e.dataTransfer.effectAllowed = 'move';
-});
-handle.addEventListener('dragend', function() {
-div.classList.remove('dragging');
-draggedItemId = null;
-document.querySelectorAll('.drag-over').forEach(function(el) { el.classList.remove('drag-over'); });
-});
-
-return div;
+  var handle = div.querySelector('.drag-handle');
+  handle.addEventListener('dragstart', function(e) {
+    draggedItemId = it.id;
+    div.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  handle.addEventListener('dragend', function() {
+    div.classList.remove('dragging');
+    draggedItemId = null;
+  });
+  return div;
 }
 
 function updateItem(id, field, value) {
@@ -1158,25 +1226,15 @@ reader.readAsText(file);
 function openAddItemModal(category) {
 addItemDefaultCategory = category;
 document.getElementById('new-item-category').value = category;
+document.getElementById('new-item-docType').value = '原件';
 document.getElementById('addItemModal').classList.remove('hidden');
-}
-
-function toggleNewOriginal() {
-newOriginal = !newOriginal;
-var toggle = document.getElementById('new-item-original');
-toggle.className = 'toggle ' + (newOriginal ? 'bg-red-500' : 'bg-gray-300');
-toggle.querySelector('.toggle-dot').style.left = newOriginal ? '22px' : '2px';
 }
 
 function closeAddItem() {
 document.getElementById('addItemModal').classList.add('hidden');
-newOriginal = false;
-var t = document.getElementById('new-item-original');
-t.className = 'toggle bg-gray-300';
-t.querySelector('.toggle-dot').style.left = '2px';
 document.getElementById('new-item-name').value = '';
-document.getElementById('new-item-category').value = 'required';
-document.getElementById('new-item-qty').value = '1';
+document.getElementById('new-item-category').value = 'core';
+document.getElementById('new-item-docType').value = '原件';
 document.getElementById('new-item-acquisition').value = '';
 document.getElementById('new-item-description').value = '';
 }
@@ -1184,7 +1242,7 @@ document.getElementById('new-item-description').value = '';
 function confirmAddItem() {
 var name = document.getElementById('new-item-name').value.trim();
 var category = document.getElementById('new-item-category').value;
-var qty = parseInt(document.getElementById('new-item-qty').value) || 1;
+var docType = document.getElementById('new-item-docType').value;
 var acquisition = document.getElementById('new-item-acquisition').value.trim();
 var description = document.getElementById('new-item-description').value.trim();
 if (!name) { alert('请输入物品名称'); return; }
@@ -1192,8 +1250,8 @@ items.push({
 id: uid(),
 name: name,
 category: category,
-isOriginal: newOriginal,
-quantity: qty,
+docType: docType,
+quantity: 1,
 filePath: '',
 acquisition: acquisition,
 description: description,

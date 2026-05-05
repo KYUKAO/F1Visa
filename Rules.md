@@ -390,15 +390,51 @@ I have received a five-year [funding type] from [source]
 - 配色方案：纯白底 + 天蓝色导航 + 玫瑰红必备 / 青绿辅助，双语对比度要高
 
 ## 代码规范
-- **配置数据必须读取外部配置文件（visa-config.json），禁止嵌入 HTML。** 通过 `fetch()` 或 `XMLHttpRequest` 动态加载，不得将 `items`、`cases` 等数据硬编码在 `<script>` 标签内。
+- **配置数据必须读取外部配置文件（visa-config.json）**。通过同步 `XMLHttpRequest` 作为主要加载方式（兼容 `file://` 和 `http://`），失败后 fallback 到异步 `fetch()`。`items`/`cases` 变量在 IIFE 之前声明为 `var`，确保同步加载时能正确赋值。
 - 清单网页: `index.html`
 - 配置文件: `visa-config.json`
+- **`category` 字段映射**：值包括 `core`（核心携带清单）、`core-identity`、`core-school-visa`、`core-academic`、`core-funding`、`core-research`、`core-work-gap`、`core-onsite`（现场辅助）。`isOriginal` 字段废止，改用 `docType` 字段。
+- **`docType` 字段**：可选值包括 `原件`、`实体照片`、`打印件`、`官方电子件`、`复印件`、`盖章原件`、`正式件/打印签名件`、`盖章原件/正式电子件打印`。`createItemCard()` 根据此字段渲染对应颜色的 badge。
 - **数据字段名必须与 JSON schema 一致。** `visa-config.json` 中案例用 `status` 字段（值为 `approved`/`rejected`），代码中判断状态必须用 `c.status`，不能用 `c.result`。`createCaseCard` 函数中所有用户输入字段必须通过 `escHtml()` 转义防止 XSS。
+- **所有隐藏/显示逻辑必须使用 `style.display`，禁止依赖 `.hidden` class。** 页面 div 初始化为 `style="display:none"`，tab 切换用 `style.display` 控制。
 
 ## 已知 Bug 修复记录
 - **案例页面不显示**：症状为点击「案例」tab 后页面空白或显示"暂无通过/拒签案例"。根因是 `createCaseCard()` 中用 `c.result === 'approved'` 判断状态，但 JSON 中字段名为 `status`，导致判断永远失败。修复：改为 `c.status === 'approved'`。`index.html` 和 `editor.html` 均受影响。
 - **GitHub Pages styles.css 404**：症状为页面样式丢失。根因是 `dist/` 目录在 `.gitignore` 中未提交。修复：从 `.gitignore` 移除 `dist/`，将 `dist/styles.css` 纳入仓库。
 - **页面切换不工作（本地 localhost）**：症状为点击「案例/问答/模板」tab 后页面不切换，显示空白或叠在一起。根因是 `showTab()` 使用 `className = 'hidden'` 切换页面可见性，但 Tailwind 的 `.hidden` class 依赖 `dist/styles.css` 正确加载。修复：页面 div 改用 `style="display:none"` 初始化，`showTab()` 改用 `style.display` 控制可见性。QA 展开收起同理，改用 `style.display`。**所有隐藏/显示逻辑必须使用 `style.display`，禁止依赖 `.hidden` class。**
+- **localhost 页面空白**：症状为所有 tab 内容均为空白，无任何错误提示。根因是 `fetch()` 在本地服务器环境下静默失败（网络错误或 MIME 类型问题），且同步 XHR fallback 因 IIFE 作用域问题未正确设置全局 `items`/`cases` 变量，导致页面数据始终为空数组。修复：同步 XHR 优先加载（`file://` 和 `http://` 均支持），加载成功则立即同步渲染；失败后才 fallback 到异步 fetch。`items`/`cases` 变量在 IIFE 之前声明为 `var items = []`，确保变量提升正确。
+- **清单分类重构（2列 → 8分类）**：症状为旧版仅有"必备清单"和"辅助材料"两列，分类过于粗糙。修复：清单页重构为 8 个分类区域（核心携带清单 + 7 个功能分组），材料类型 badge 从"原件/复印件"两种扩展为 6 种（原件、实体照片、打印件、官方电子件、复印件、盖章原件）。`visa-config.json` 中 `isOriginal` 字段废止，改用 `docType` 字段指定材料类型，`category` 字段对应新的分组 ID。`index.html` 中 `renderRequired()`/`renderSupporting()` 废止，改用 `renderCore()` + `renderCategory()`。`createItemCard()` 接受第二参数 `compact` 控制卡片紧凑程度。
+
+## 文件管理规则
+
+### 源文件路径规则
+- **源文件不直接放在工程根目录**，而是从以下源目录查找并复制到工程 `docs/` 文件夹：
+  - `E:\留学申请\For MEAE\` — 主申请材料目录
+  - `E:\留学申请\For MEAE\passport\` — 护照及财务证明
+  - `E:\留学申请\For MEAE\推荐信\` — 推荐信
+  - `C:\Users\ASUS\Desktop\美签文件\` — 美签专用材料（DS-160、I-20、照片等）
+- **文件复制到 `docs/` 子目录**（按类型分：`passport/`、`ds160/`、`i20/`、`photo/`、`sevis/`、`certificates/` 等），再将**相对路径**写入 `visa-config.json` 对应条目的 `filePath` 字段。
+- 所有 `filePath` 使用**正斜杠 `/`**（兼容浏览器和跨平台），格式为 `docs/子目录/文件名.扩展名`。
+- 当同一文件有多个版本时（如 Study Plan），将**最新版本**复制进来，并在 `visa-config.json` 中更新为最新文件的路径。
+
+### docs/ 目录结构
+```
+docs/
+  admission-letters/    # 录取通知书
+  bank-statement/      # 银行存款证明
+  certificates/        # 证书（毕业证、学位证等）
+  cv/                  # 个人简历
+  ds160/               # DS-160 确认页
+  english-scores/      # 雅思、托福等英语成绩单
+  i20/                 # I-20 表
+  passport/            # 护照扫描件
+  photo/               # 签证照片
+  reference-letters/   # 推荐信
+  sevis/               # SEVIS I-901 收据
+  study-plan/          # 学习计划 / 研究计划
+  transcripts/         # 中英文成绩单
+```
+- **`docs/` 目录下的签证文件不推送到 GitHub**，仅供本地使用。`.gitignore` 中已排除 `docs/`。
 
 ## Shell 规范（PowerShell）
 - PowerShell 不支持 Bash 的 `&&` 链接命令。

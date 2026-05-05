@@ -126,51 +126,106 @@ input[type="checkbox"][disabled] { cursor: default; }
 <div class="flex flex-col gap-6">
 
 <!-- 图例 -->
-<div class="flex flex-wrap items-center gap-4 text-xs font-semibold text-gray-600 bg-gray-50 rounded-xl px-4 py-2 border border-gray-200">
-<span class="font-bold text-gray-800 mr-1">图例:</span>
-<input type="checkbox" checked disabled class="w-4 h-4 rounded border-2 border-gray-300 accent-blue-600">
-<span>已准备</span>
-<span class="text-gray-300">|</span>
-<div class="flex items-center gap-1">
-<div class="w-5 h-5 bg-rose-100 text-rose-700 rounded text-xs flex items-center justify-center font-bold border border-rose-300">原</div>
-<span>原件</span>
-</div>
-<span class="text-gray-300">|</span>
-<div class="flex items-center gap-1">
-<div class="w-5 h-5 bg-gray-100 text-gray-500 rounded text-xs flex items-center justify-center border border-gray-300">印</div>
-<span>复印件</span>
-</div>
+<div class="flex flex-wrap items-center gap-3 text-xs font-semibold text-gray-600 bg-gray-50 rounded-xl px-4 py-2 border border-gray-200">
+<span class="font-bold text-gray-800 mr-1">材料类型:</span>
+<div class="flex items-center gap-1"><div class="w-5 h-5 bg-green-100 text-green-700 rounded text-xs flex items-center justify-center font-bold border border-green-300">原</div><span>原件</span></div>
+<div class="flex items-center gap-1"><div class="w-5 h-5 bg-sky-100 text-sky-700 rounded text-xs flex items-center justify-center font-bold border border-sky-300">照</div><span>实体照片</span></div>
+<div class="flex items-center gap-1"><div class="w-5 h-5 bg-blue-100 text-blue-700 rounded text-xs flex items-center justify-center font-bold border border-blue-300">打</div><span>打印件</span></div>
+<div class="flex items-center gap-1"><div class="w-5 h-5 bg-gray-100 text-gray-500 rounded text-xs flex items-center justify-center font-bold border border-gray-300">印</div><span>复印件</span></div>
+<div class="flex items-center gap-1"><div class="w-5 h-5 bg-orange-100 text-orange-700 rounded text-xs flex items-center justify-center font-bold border border-orange-300">章</div><span>盖章原件</span></div>
+<div class="flex items-center gap-1"><input type="checkbox" checked disabled class="w-4 h-4 rounded border-2 border-gray-300 accent-blue-600"><span>已准备</span></div>
 </div>
 
-<!-- 必备清单 -->
+<!-- 核心携带清单 -->
 <div>
 <div class="flex items-center justify-between mb-3">
 <div class="flex items-center gap-2">
 <div class="w-3 h-3 rounded-full bg-rose-500"></div>
-<h2 class="text-lg font-bold text-rose-800">必备清单</h2>
-<span class="relative group cursor-help" title="面签时必须携带的材料，无则必拒">
-<svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-</span>
+<h2 class="text-lg font-bold text-rose-800">核心携带清单</h2>
 </div>
 </div>
-<div id="required-col" class="space-y-3 min-h-[300px] bg-white rounded-2xl p-4 border-2 border-rose-200 transition-all">
-<p class="text-center text-rose-300 text-sm py-12">加载中...</p>
+<div id="col-core" class="space-y-3 min-h-[100px] bg-white rounded-2xl p-4 border-2 border-rose-200 transition-all">
+<p class="text-center text-rose-300 text-sm py-8">加载中...</p>
 </div>
 </div>
 
-<!-- 辅助材料 -->
+<!-- 7 categories stacked vertically -->
+<div class="space-y-4">
+
+<!-- 身份与入场辅助 -->
 <div>
-<div class="flex items-center justify-between mb-3">
-<div class="flex items-center gap-2">
-<div class="w-3 h-3 rounded-full bg-teal-500"></div>
-<h2 class="text-lg font-bold text-teal-800">辅助材料</h2>
-<span class="relative group cursor-help" title="有助于增强说服力的补充材料，提高通过率">
-<svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-</span>
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-gray-500"></div>
+<h3 class="text-sm font-bold text-gray-700">身份与入场辅助</h3>
+</div>
+<div id="col-identity" class="space-y-2 bg-gray-50 rounded-xl p-3 border border-gray-200 min-h-[60px]">
+<p class="text-center text-gray-300 text-xs py-4">加载中...</p>
 </div>
 </div>
-<div id="supporting-col" class="space-y-3 min-h-[300px] bg-white rounded-2xl p-4 border-2 border-teal-200 transition-all">
-<p class="text-center text-teal-300 text-sm py-12">加载中...</p>
+
+<!-- 学校与签证文件 -->
+<div>
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-blue-500"></div>
+<h3 class="text-sm font-bold text-blue-700">学校与签证文件</h3>
+</div>
+<div id="col-school-visa" class="space-y-2 bg-blue-50 rounded-xl p-3 border border-blue-200 min-h-[60px]">
+<p class="text-center text-blue-300 text-xs py-4">加载中...</p>
+</div>
+</div>
+
+<!-- 学历与学术材料 -->
+<div>
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-purple-500"></div>
+<h3 class="text-sm font-bold text-purple-700">学历与学术材料</h3>
+</div>
+<div id="col-academic" class="space-y-2 bg-purple-50 rounded-xl p-3 border border-purple-200 min-h-[60px]">
+<p class="text-center text-purple-300 text-xs py-4">加载中...</p>
+</div>
+</div>
+
+<!-- 资金与资助材料 -->
+<div>
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<h3 class="text-sm font-bold text-green-700">资金与资助材料</h3>
+</div>
+<div id="col-funding" class="space-y-2 bg-green-50 rounded-xl p-3 border border-green-200 min-h-[60px]">
+<p class="text-center text-green-300 text-xs py-4">加载中...</p>
+</div>
+</div>
+
+<!-- 研究/专业解释材料 -->
+<div>
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-orange-500"></div>
+<h3 class="text-sm font-bold text-orange-700">研究/专业解释材料</h3>
+</div>
+<div id="col-research" class="space-y-2 bg-orange-50 rounded-xl p-3 border border-orange-200 min-h-[60px]">
+<p class="text-center text-orange-300 text-xs py-4">加载中...</p>
+</div>
+</div>
+
+<!-- 工作与 Gap 解释材料 -->
+<div>
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-amber-500"></div>
+<h3 class="text-sm font-bold text-amber-700">工作与 Gap 解释材料</h3>
+</div>
+<div id="col-work-gap" class="space-y-2 bg-amber-50 rounded-xl p-3 border border-amber-200 min-h-[60px]">
+<p class="text-center text-amber-300 text-xs py-4">加载中...</p>
+</div>
+</div>
+
+<!-- 现场辅助 -->
+<div>
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 rounded-full bg-slate-400"></div>
+<h3 class="text-sm font-bold text-slate-600">现场辅助</h3>
+</div>
+<div id="col-onsite" class="space-y-2 bg-slate-50 rounded-xl p-3 border border-slate-200 min-h-[60px]">
+<p class="text-center text-slate-300 text-xs py-4">加载中...</p>
 </div>
 </div>
 
@@ -347,139 +402,139 @@ Awards, Interests, Skills:
 </div><!-- end max-w container -->
 
 <script>
-// ===== DATA =====
+// ===== DATA (declared early so render functions can access them) =====
 var items = [];
 var cases = [];
 var currentFilter = 'all';
 
-// ===== INIT =====
-function init() {
-loadItems();
-loadCases();
-renderQA();
-}
+// ===== DATA LOADER =====
+(function() {
+  console.log('[F1] Starting data load...');
+  // 1. Try synchronous XHR (works on file:// and http://)
+  var data = null;
+  try {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'visa-config.json', false);
+    xhr.send(null);
+    console.log('[F1] XHR status:', xhr.status, 'response length:', xhr.responseText.length);
+    if (xhr.status === 200 || xhr.status === 0) {
+      data = JSON.parse(xhr.responseText);
+      console.log('[F1] XHR parsed OK, items:', (data.items||[]).length, 'cases:', (data.cases||[]).length);
+    }
+  } catch(e) {
+    console.log('[F1] XHR error:', e.message);
+  }
 
-// ===== STORAGE =====
-function loadItems() {
-fetch('visa-config.json')
-.then(function(r) { return r.json(); })
-.then(function(data) {
-if (data.items && Array.isArray(data.items)) {
-items = data.items;
-renderAll();
-} else {
-items = [];
-renderAll();
-}
-})
-.catch(function() {
-var xhr = new XMLHttpRequest();
-xhr.open('GET', 'visa-config.json', false);
-xhr.send(null);
-if (xhr.status === 200) {
-try {
-var data = JSON.parse(xhr.responseText);
-if (data.items && Array.isArray(data.items)) {
-items = data.items;
-renderAll();
-return;
-}
-} catch(e) {}
-}
-items = [];
-renderAll();
-});
-}
+  if (data) {
+    items = data.items || [];
+    cases = data.cases || [];
+    renderCore();
+    renderCategory('col-identity', 'core-identity');
+    renderCategory('col-school-visa', 'core-school-visa');
+    renderCategory('col-academic', 'core-academic');
+    renderCategory('col-funding', 'core-funding');
+    renderCategory('col-research', 'core-research');
+    renderCategory('col-work-gap', 'core-work-gap');
+    renderCategory('col-onsite', 'core-onsite');
+    renderCases();
+    console.log('[F1] Rendered from XHR');
+    return;
+  }
 
-function loadCases() {
-fetch('visa-config.json')
-.then(function(r) { return r.json(); })
-.then(function(data) {
-if (data.cases && Array.isArray(data.cases)) {
-cases = data.cases;
-renderCases();
-}
-})
-.catch(function() {
-var xhr = new XMLHttpRequest();
-xhr.open('GET', 'visa-config.json', false);
-xhr.send(null);
-if (xhr.status === 200) {
-try {
-var data = JSON.parse(xhr.responseText);
-if (data.cases && Array.isArray(data.cases)) {
-cases = data.cases;
-renderCases();
-return;
-}
-} catch(e) {}
-}
-cases = [];
-renderCases();
-});
-}
+  // 2. Fallback: async fetch
+  console.log('[F1] Falling back to fetch...');
+  fetch('visa-config.json')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      items = d.items || [];
+      cases = d.cases || [];
+      renderCore();
+      renderCategory('identity', 'core-identity');
+      renderCategory('school-visa', 'core-school-visa');
+      renderCategory('academic', 'core-academic');
+      renderCategory('funding', 'core-funding');
+      renderCategory('research', 'core-research');
+      renderCategory('work-gap', 'core-work-gap');
+      renderCategory('onsite', 'core-onsite');
+      renderCases();
+      console.log('[F1] Rendered from fetch');
+    })
+    .catch(function(e) {
+      console.log('[F1] Fetch error:', e.message);
+    });
+})();
 
 // ===== RENDER =====
 function renderAll() {
-renderRequired();
-renderSupporting();
-renderCases();
+  renderCore();
+  renderCategory('col-identity', 'core-identity');
+  renderCategory('col-school-visa', 'core-school-visa');
+  renderCategory('col-academic', 'core-academic');
+  renderCategory('col-funding', 'core-funding');
+  renderCategory('col-research', 'core-research');
+  renderCategory('col-work-gap', 'core-work-gap');
+  renderCategory('col-onsite', 'core-onsite');
 }
 
-function renderRequired() {
-var col = document.getElementById('required-col');
-var required = items.filter(function(it) { return it.category === 'required'; });
-
-if (required.length === 0) {
-col.innerHTML = '<p class="text-center text-gray-300 text-sm py-12">暂无必备清单</p>';
-return;
-}
-col.innerHTML = '';
-required.forEach(function(it) {
-col.appendChild(createItemCard(it));
-});
+function renderCore() {
+  var col = document.getElementById('col-core');
+  var coreItems = items.filter(function(it) { return it.category === 'core'; });
+  if (coreItems.length === 0) {
+    col.innerHTML = '<p class="text-center text-rose-300 text-sm py-8">暂无核心携带清单</p>';
+    return;
+  }
+  col.innerHTML = '';
+  coreItems.forEach(function(it) { col.appendChild(createItemCard(it)); });
 }
 
-function renderSupporting() {
-var col = document.getElementById('supporting-col');
-var supporting = items.filter(function(it) { return it.category === 'supporting'; });
-
-if (supporting.length === 0) {
-col.innerHTML = '<p class="text-center text-gray-300 text-sm py-12">暂无辅助材料</p>';
-return;
-}
-col.innerHTML = '';
-supporting.forEach(function(it) {
-col.appendChild(createItemCard(it));
-});
+function renderCategory(colId, filterCat) {
+  var col = document.getElementById(colId);
+  var filtered = items.filter(function(it) { return it.category === filterCat; });
+  if (filtered.length === 0) {
+    col.innerHTML = '<p class="text-center text-gray-300 text-xs py-6">暂无</p>';
+    return;
+  }
+  col.innerHTML = '';
+  filtered.forEach(function(it) { col.appendChild(createItemCard(it, true)); });
 }
 
-function createItemCard(it) {
-var catBorder = it.category === 'required' ? 'border-amber-400' : 'border-blue-400';
-var catBg     = it.category === 'required' ? 'bg-amber-50' : 'bg-blue-50';
-var originalBg   = it.isOriginal ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500';
-var originalText  = it.isOriginal ? '原件' : '复印件';
+function createItemCard(it, compact) {
+  var docTypeStyles = {
+    '原件': 'bg-green-100 text-green-700 border border-green-300',
+    '实体照片': 'bg-sky-100 text-sky-700 border border-sky-300',
+    '打印件': 'bg-blue-100 text-blue-700 border border-blue-300',
+    '复印件': 'bg-gray-100 text-gray-500 border border-gray-300',
+    '盖章原件': 'bg-orange-100 text-orange-700 border border-orange-300'
+  };
+  var dtLabel = it.docType || '原件';
+  var dtStyle = docTypeStyles[dtLabel] || 'bg-gray-100 text-gray-600 border border-gray-300';
+  var dtShort = dtLabel.length > 3 ? dtLabel.slice(0, 3) : dtLabel;
 
-var div = document.createElement('div');
-div.className = 'item-card bg-white rounded-xl p-4 shadow-sm';
-div.innerHTML =
-'<div class="flex items-start gap-2 border-l-4 ' + catBorder + ' ' + catBg + ' rounded-r-xl px-4 py-3">' +
-'<div class="flex flex-col items-center gap-2 pt-1 shrink-0">' +
-'<input type="checkbox" ' + (it.isReady ? 'checked' : '') + ' disabled class="w-5 h-5 rounded border-2 border-gray-300 accent-blue-600 cursor-not-allowed">' +
-'</div>' +
-'<div class="flex-1 min-w-0 space-y-1">' +
-'<div class="item-meta-row">' +
-'<span class="item-name-input font-bold text-gray-900 text-base px-1 py-0.5 w-auto min-w-[120px]">' + escHtml(it.name) + '</span>' +
-'<span class="shrink-0 text-xs px-1.5 py-0.5 rounded font-bold border-0 ' + originalBg + '">' + originalText + '</span>' +
-'<span class="shrink-0 text-xs px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 border-0 text-center">x' + it.quantity + '</span>' +
-'</div>' +
-(it.filePath ? '<div class="flex items-center gap-2"><span class="text-xs text-gray-400 shrink-0">文件</span><span class="flex-1 text-xs text-blue-600 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded w-full min-w-0" spellcheck="false">' + escHtml(it.filePath) + '</span></div>' : '') +
-(it.acquisition ? '<div class="flex items-center gap-2"><span class="text-xs text-gray-400 shrink-0">来源</span><span class="flex-1 text-xs text-gray-500 bg-transparent px-1 py-0.5 w-full">' + escHtml(it.acquisition) + '</span></div>' : '') +
-(it.description ? '<p class="text-xs text-gray-600 leading-relaxed px-1">' + escHtml(it.description) + '</p>' : '') +
-'</div>' +
-'</div>';
+  var div = document.createElement('div');
+  div.className = 'bg-white rounded-lg p-2 shadow-sm';
 
-return div;
+  var filePathRow = it.filePath
+    ? '<div class="flex items-center gap-1 mt-1"><span class="text-[10px] text-gray-400 shrink-0">档</span><span class="text-[10px] text-blue-600 bg-blue-50 border border-blue-200 px-1 py-0.5 rounded w-full truncate" spellcheck="false" title="' + escHtml(it.filePath) + '">' + escHtml(it.filePath) + '</span></div>'
+    : '';
+  var acquisitionRow = it.acquisition
+    ? '<div class="flex items-center gap-1 mt-0.5"><span class="text-[10px] text-gray-400 shrink-0">源</span><span class="text-[10px] text-gray-500 w-full truncate">' + escHtml(it.acquisition) + '</span></div>'
+    : '';
+
+  div.innerHTML =
+  '<div class="flex items-start gap-1.5">' +
+  '<input type="checkbox" ' + (it.isReady ? 'checked' : '') + ' disabled class="w-3.5 h-3.5 mt-0.5 rounded border border-gray-300 accent-blue-600 shrink-0 cursor-not-allowed">' +
+  '<div class="flex-1 min-w-0">' +
+  '<div class="flex items-center gap-2 flex-wrap">' +
+  '<span class="text-sm font-bold text-gray-900 leading-tight">' + escHtml(it.name) + '</span>' +
+  '<span class="shrink-0 text-[10px] px-1 py-0.5 rounded font-bold ' + dtStyle + '" title="' + escHtml(dtLabel) + '">' + escHtml(dtShort) + '</span>' +
+  '<span class="shrink-0 text-[10px] px-1 py-0.5 rounded bg-gray-100 text-gray-500">x' + it.quantity + '</span>' +
+  '</div>' +
+  filePathRow +
+  acquisitionRow +
+  '</div>' +
+  '</div>';
+
+  return div;
 }
 
 // ===== TABS =====
@@ -632,6 +687,11 @@ rejected.style.display = 'block';
 function escHtml(s) {
 if (!s) return '';
 return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ===== INIT =====
+function init() {
+  renderQA();
 }
 
 // ===== START =====
