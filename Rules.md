@@ -393,3 +393,8 @@ I have received a five-year [funding type] from [source]
 - **配置数据必须读取外部配置文件（visa-config.json），禁止嵌入 HTML。** 通过 `fetch()` 或 `XMLHttpRequest` 动态加载，不得将 `items`、`cases` 等数据硬编码在 `<script>` 标签内。
 - 清单网页: `index.html`
 - 配置文件: `visa-config.json`
+
+## Shell 规范（PowerShell）
+- PowerShell 不支持 Bash 的 `&&` 链接命令。
+- 使用 `;` 替代 `&&` 连接多个命令，或直接分行执行。
+- 示例：`cd foo ; npm install` 或直接在脚本中分行写多个命令。

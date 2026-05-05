@@ -13,19 +13,35 @@ const MIME = {
   '.jpg': 'image/jpeg',
   '.gif': 'image/gif',
   '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
   '.pdf': 'application/pdf',
 };
 
 const server = http.createServer((req, res) => {
-  let filePath = path.join(__dirname, req.url === '/' ? 'index.html' : req.url);
+  let url = req.url.split('?')[0];
+  let filePath = path.join(__dirname, url === '/' ? 'index.html' : url);
+
   const ext = path.extname(filePath).toLowerCase();
   const mime = MIME[ext] || 'application/octet-stream';
 
   fs.readFile(filePath, (err, data) => {
     if (err) {
       if (err.code === 'ENOENT') {
+        // Fallback: serve index.html for SPA-style routing
+        if (url !== '/favicon.ico') {
+          fs.readFile(path.join(__dirname, 'index.html'), (err2, data2) => {
+            if (!err2) {
+              res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+              res.end(data2);
+            } else {
+              res.writeHead(404);
+              res.end('Not Found: ' + url);
+            }
+          });
+          return;
+        }
         res.writeHead(404);
-        res.end('Not Found: ' + req.url);
+        res.end();
       } else {
         res.writeHead(500);
         res.end('Server Error');
